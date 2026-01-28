@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
@@ -9,8 +9,19 @@ import { redirectForRole } from "@/src/lib/auth";
 export function NavLinks() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, token, authLoading } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Debug: Log auth state changes
+  useEffect(() => {
+    console.log("🔍 [NavLinks] Auth state:", {
+      user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : null,
+      token: token ? `${token.substring(0, 20)}...` : null,
+      loading,
+      authLoading,
+      hasTokenInStorage: typeof window !== "undefined" ? !!localStorage.getItem("token") : false,
+    });
+  }, [user, token, loading, authLoading]);
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -37,6 +48,15 @@ export function NavLinks() {
         return "bg-white/10 text-white/80 border-white/20";
     }
   };
+
+  // Debug: Print role when dropdown opens
+  useEffect(() => {
+    if (showProfileMenu && user) {
+      console.log("🔍 User Role:", user.role);
+      console.log("🔍 Full User Object:", user);
+      console.log("🔍 Role Type:", typeof user.role);
+    }
+  }, [showProfileMenu, user]);
 
   // Show loading state or nothing while checking auth
   if (loading) {
@@ -188,8 +208,15 @@ export function NavLinks() {
                 {user.email && (
                   <div className="text-xs text-white/70 mt-1">{user.email}</div>
                 )}
-                <div className={`text-xs px-2 py-1 rounded-full border mt-2 inline-block ${getRoleBadgeColor(user.role)}`}>
-                  {user.role}
+                <div className="mt-3 space-y-2">
+                  <div className="text-xs text-white/50 uppercase tracking-wide">Role</div>
+                  <div className={`text-sm px-3 py-1.5 rounded-full border font-semibold inline-block ${getRoleBadgeColor(user.role)}`}>
+                    {user.role || "N/A"}
+                  </div>
+                  {/* Debug info */}
+                  <div className="text-xs text-white/40 mt-1 font-mono">
+                    Role: {JSON.stringify(user.role)}
+                  </div>
                 </div>
               </div>
               <div className="p-2 space-y-1">

@@ -29,10 +29,15 @@ export default function StudentBookingsPage() {
     const fetchBookings = async () => {
       setError(null);
       try {
-        const res = await get<Booking[]>("/api/bookings");
-        setBookings(res.data);
+        const res = await get<{ success?: boolean; bookings?: Booking[] } | Booking[]>("/api/bookings/my");
+        // Handle both wrapped and unwrapped responses
+        const bookingsArray = Array.isArray(res.data) 
+          ? res.data 
+          : (res.data as any)?.bookings || (res.data as any)?.data || [];
+        setBookings(Array.isArray(bookingsArray) ? bookingsArray : []);
       } catch (err) {
         setError("Unable to load bookings.");
+        setBookings([]);
       } finally {
         setLoading(false);
       }

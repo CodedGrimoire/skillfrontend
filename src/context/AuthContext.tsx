@@ -26,6 +26,7 @@ type AuthContextValue = {
   login: (token: string) => Promise<void>;
   logout: () => void;
   refresh: () => Promise<void>;
+  refreshUser: () => Promise<void>; // Explicit refresh user method
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -38,18 +39,79 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fetch user data from API
   const fetchMe = useCallback(async (tokenValue: string) => {
     try {
-      const res = await get<User>("/api/auth/me");
-      setUser(res.data);
-      setToken(tokenValue);
-    } catch (err) {
-      // Token is invalid/expired - clear everything
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
+      console.log("🔍 [AuthContext] fetchMe called with token:", tokenValue ? `${tokenValue.substring(0, 20)}...` : "null");
+      setLoading(true);
+      
+      // Ensure token is in localStorage before making request (for interceptor)
+      if (typeof window !== "undefined" && tokenValue) {
+        localStorage.setItem("token", tokenValue);
+        console.log("🔍 [AuthContext] Token saved to localStorage");
       }
-      setToken(null);
-      setUser(null);
+      
+      console.log("🔍 [AuthContext] Calling GET /api/auth/me");
+      const res = await get<{ success?: boolean; user?: User }>("/api/auth/me");
+      console.log("🔍 [AuthContext] /api/auth/me response:", res.data);
+      
+      // Extract user from response.data.user (API returns { success: true, user: {...} })
+      const userData = res.data.user || res.data;
+      
+      // Validate user data structure
+      if (
+        userData &&
+        typeof userData === "object" &&
+        typeof userData.id === "string" &&
+        typeof userData.name === "string" &&
+        typeof userData.email === "string" &&
+        typeof userData.role === "string" &&
+        ["STUDENT", "TUTOR", "ADMIN"].includes(userData.role)
+      ) {
+        setUser(userData as User);
+        setToken(tokenValue);
+        console.log("🔍 [AuthContext] User set successfully:", userData);
+      } else {
+        console.error("🔍 [AuthContext] Invalid user data structure:", userData);
+        throw new Error("Invalid user data structure");
+      }
+    } catch (err: any) {
+      console.error("🔍 [AuthContext] fetchMe error:", err);
+      const status = err?.response?.status;
+      const isAuthError = status === 401 || status === 403;
+      
+      console.error("🔍 [AuthContext] Error details:", {
+        message: err?.message,
+        response: err?.response?.data,
+        status,
+        isAuthError,
+      });
+      
+      // Only remove token if it's an authentication error (401/403)
+      // Don't remove token for other errors (network, validation, etc.)
+      if (isAuthError) {
+        console.log("🔍 [AuthContext] Authentication error (401/403), removing token");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("token");
+        }
+        setToken(null);
+        setUser(null);
+      } else {
+        // For other errors, keep token but clear user
+        // This allows retry without re-login
+        console.log("🔍 [AuthContext] Non-auth error, keeping token but clearing user");
+        setUser(null);
+      }
+    } finally {
+      setLoading(false);
+      console.log("🔍 [AuthContext] fetchMe completed, loading set to false");
     }
   }, []);
+
+  // Refresh user data (public method)
+  const refreshUser = useCallback(async () => {
+    const currentToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
+    if (currentToken) {
+      await fetchMe(currentToken);
+    }
+  }, [token, fetchMe]);
 
   // Initialize auth state on mount
   useEffect(() => {
@@ -60,15 +122,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const initializeAuth = async () => {
+      console.log("🔍 [AuthContext] Initializing auth...");
       const storedToken = localStorage.getItem("token");
+      console.log("🔍 [AuthContext] Stored token:", storedToken ? `${storedToken.substring(0, 20)}...` : "null");
       
       if (storedToken) {
-        // Token exists - fetch user data
+        // Token exists - fetch user data (fetchMe will set loading to false)
+        console.log("🔍 [AuthContext] Token found, calling fetchMe...");
         await fetchMe(storedToken);
+      } else {
+        // No token - set loading to false immediately
+        console.log("🔍 [AuthContext] No token found, setting loading to false");
+        setLoading(false);
       }
-      
-      // Always set loading to false after initialization
-      setLoading(false);
     };
 
     initializeAuth();
@@ -76,10 +142,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (newToken: string) => {
+      console.log("🔍 [AuthContext] login called with token:", newToken ? `${newToken.substring(0, 20)}...` : "null");
+      
+      // Save token to localStorage first
       if (typeof window !== "undefined") {
         localStorage.setItem("token", newToken);
+        console.log("🔍 [AuthContext] Token saved to localStorage in login()");
       }
       setToken(newToken);
+      
+      // Fetch user data immediately
+      console.log("🔍 [AuthContext] Calling fetchMe from login()...");
       await fetchMe(newToken);
     },
     [fetchMe],
@@ -100,8 +173,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token, fetchMe]);
 
   const value = useMemo(
-    () => ({ user, token, loading, authLoading: loading, login, logout, refresh }),
-    [user, token, loading, login, logout, refresh],
+    () => ({ user, token, loading, authLoading: loading, login, logout, refresh, refreshUser }),
+    [user, token, loading, login, logout, refresh, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

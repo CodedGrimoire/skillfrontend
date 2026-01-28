@@ -21,10 +21,13 @@ export default function AdminBookingsPage() {
     const fetchBookings = async () => {
       setError(null);
       try {
-        const res = await get<AdminBooking[]>("/api/admin/bookings");
-        setBookings(res.data);
+        const res = await get<{ success: boolean; bookings: AdminBooking[] }>("/api/admin/bookings");
+        // Extract bookings array from response: { success: true, bookings: [...] }
+        const bookingsArray = res.data.bookings || res.data || [];
+        setBookings(Array.isArray(bookingsArray) ? bookingsArray : []);
       } catch (err) {
         setError("Unable to load bookings.");
+        setBookings([]);
       } finally {
         setLoading(false);
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
 import { redirectForRole } from "@/src/lib/auth";
@@ -12,7 +12,7 @@ import { AuthGate } from "@/src/components/AuthGate";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, refreshUser, user, authLoading } = useAuth();
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,10 +36,15 @@ export default function LoginPage() {
         password,
       });
 
-      const { token, role } = res.data;
+      const { token } = res.data;
+      
+      // Save token and fetch user data
+      // login() saves token to localStorage and calls fetchMe to get user data
       await login(token);
+      
+      // Wait for user to be set before showing success/redirecting
+      // The redirect will happen in useEffect when user is available
       showToast("Logged in successfully", "success");
-      router.replace(redirectForRole(role));
     } catch (err: unknown) {
       setError("Login failed. Please check your credentials.");
       showToast("Login failed", "error");
@@ -47,6 +52,27 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Redirect after user data is loaded from login
+  // Note: AuthGate will also handle redirect for already-authenticated users
+  // This useEffect handles redirect after successful login
+  useEffect(() => {
+    // Don't redirect if still loading auth
+    if (authLoading) {
+      return;
+    }
+
+    // Only redirect if user exists and has a role
+    // This handles the case where user was just set after login
+    if (user && user.role) {
+      const targetPath = redirectForRole(user.role);
+      // Only redirect if we're still on the login page
+      if (typeof window !== "undefined" && window.location.pathname === "/login") {
+        console.log("🔍 [LoginPage] User loaded, redirecting to:", targetPath);
+        router.replace(targetPath);
+      }
+    }
+  }, [authLoading, user, router]);
 
   return (
     <AuthGate mode="publicOnly">

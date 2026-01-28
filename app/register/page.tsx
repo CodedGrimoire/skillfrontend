@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
 import { redirectForRole } from "@/src/lib/auth";
@@ -17,7 +17,7 @@ const roles = [
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, authLoading } = useAuth();
   const { showToast } = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,6 +26,13 @@ export default function RegisterPage() {
   const [role, setRole] = useState("STUDENT");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Redirect after user data is loaded from registration
+  useEffect(() => {
+    if (!authLoading && user && user.role) {
+      router.replace(redirectForRole(user.role));
+    }
+  }, [authLoading, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +52,13 @@ export default function RegisterPage() {
         role,
       });
 
-      const { token, role: userRole } = res.data;
+      const { token } = res.data;
+      
+      // Save token and fetch user data
       await login(token);
       showToast("Account created", "success");
-      router.replace(redirectForRole(userRole));
+      
+      // Note: Redirect will happen in useEffect when user.role is available
     } catch (err: unknown) {
       setError("Registration failed. Please try again.");
       showToast("Registration failed", "error");

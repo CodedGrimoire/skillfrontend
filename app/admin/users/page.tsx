@@ -23,10 +23,13 @@ export default function AdminUsersPage() {
   const fetchUsers = async () => {
     setError(null);
     try {
-      const res = await get<User[]>("/api/admin/users");
-      setUsers(res.data);
+      const res = await get<{ success: boolean; users: User[] }>("/api/admin/users");
+      // Extract users array from response: { success: true, users: [...] }
+      const usersArray = res.data.users || res.data || [];
+      setUsers(Array.isArray(usersArray) ? usersArray : []);
     } catch (err) {
       setError("Unable to load users.");
+      setUsers([]);
     } finally {
       setLoading(false);
     }
