@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
+import { redirectForRole } from "@/src/lib/auth";
+import { useAuth } from "@/src/context/AuthContext";
 
 const roles = [
   { value: "STUDENT", label: "Student" },
@@ -11,6 +13,7 @@ const roles = [
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,11 +40,8 @@ export default function RegisterPage() {
       });
 
       const { token, role: userRole } = res.data;
-      localStorage.setItem("token", token);
-
-      if (userRole === "TUTOR") router.push("/tutor/dashboard");
-      else if (userRole === "ADMIN") router.push("/admin");
-      else router.push("/dashboard");
+      await login(token);
+      router.push(redirectForRole(userRole));
     } catch (err: unknown) {
       setError("Registration failed. Please try again.");
     } finally {

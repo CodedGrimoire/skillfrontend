@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
+import { redirectForRole } from "@/src/lib/auth";
+import { useAuth } from "@/src/context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,11 +31,8 @@ export default function LoginPage() {
       });
 
       const { token, role } = res.data;
-      localStorage.setItem("token", token);
-
-      if (role === "TUTOR") router.push("/tutor/dashboard");
-      else if (role === "ADMIN") router.push("/admin");
-      else router.push("/dashboard");
+      await login(token);
+      router.push(redirectForRole(role));
     } catch (err: unknown) {
       setError("Login failed. Please check your credentials.");
     } finally {
