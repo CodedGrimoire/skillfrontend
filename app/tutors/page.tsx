@@ -100,58 +100,58 @@ export default function TutorsPage() {
   return (
     <div className="space-y-10">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-slate-900">Browse Tutors</h1>
-        <p className="text-sm text-slate-600">
+        <h1 className="text-2xl font-semibold text-white">Browse Tutors</h1>
+        <p className="text-sm text-white/70">
           Filter by category, price, and ratings to find the right expert.
         </p>
       </header>
 
       {/* Filters */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="glass-card">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Category</label>
+            <label className="text-sm font-medium text-white/90">Category</label>
             <input
               type="text"
               value={filters.category}
               onChange={(e) => handleFilterChange("category", e.target.value)}
               placeholder="e.g., Web Development"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Min Price</label>
+            <label className="text-sm font-medium text-white/90">Min Price</label>
             <input
               type="number"
               min={0}
               value={filters.minPrice}
               onChange={(e) => handleFilterChange("minPrice", e.target.value)}
               placeholder="$"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Max Price</label>
+            <label className="text-sm font-medium text-white/90">Max Price</label>
             <input
               type="number"
               min={0}
               value={filters.maxPrice}
               onChange={(e) => handleFilterChange("maxPrice", e.target.value)}
               placeholder="$"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Sort</label>
+            <label className="text-sm font-medium text-white/90">Sort</label>
             <select
               value={filters.sort}
               onChange={(e) =>
                 handleFilterChange("sort", e.target.value as Filters["sort"])
               }
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
             >
-              <option value="rating_desc">Rating: High to Low</option>
-              <option value="rating_asc">Rating: Low to High</option>
+              <option value="rating_desc" className="bg-[#0a0e27]">Rating: High to Low</option>
+              <option value="rating_asc" className="bg-[#0a0e27]">Rating: Low to High</option>
             </select>
           </div>
         </div>
@@ -161,11 +161,11 @@ export default function TutorsPage() {
       {loading ? (
         <SkeletonGrid />
       ) : error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="glass-card px-4 py-3 text-sm text-rose-300 border-rose-500/30 bg-rose-500/10">
           {error}
         </div>
       ) : tutors.length === 0 ? (
-        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-6 text-sm text-slate-700">
+        <div className="glass-card px-4 py-6 text-sm text-white/70 text-center">
           No tutors found. Try adjusting your filters.
         </div>
       ) : (
@@ -174,34 +174,34 @@ export default function TutorsPage() {
             <Link
               key={tutor.id}
               href={`/tutors/${tutor.id}`}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="group glass-card p-5"
             >
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-slate-200 to-slate-100" />
+                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-white/20" />
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 group-hover:text-slate-800">
+                  <h3 className="text-lg font-semibold text-white group-hover:text-white/90 transition-colors">
                     {tutor.name}
                   </h3>
-                  <p className="text-sm text-slate-600">{tutor.subject}</p>
+                  <p className="text-sm text-white/70">{tutor.subject}</p>
                 </div>
               </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-slate-700">
+              <div className="mt-4 flex items-center justify-between text-sm text-white/80">
                 <span>{tutor.category ?? "General"}</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">
                   {tutor.rating ? (
                     <>
-                      {tutor.rating.toFixed(1)} <StarIcon className="h-3 w-3 fill-emerald-700" />
+                      {tutor.rating.toFixed(1)} <StarIcon className="h-3 w-3 fill-emerald-300" />
                     </>
                   ) : (
                     "New"
                   )}
                 </span>
               </div>
-              <div className="mt-3 text-sm text-slate-700">
+              <div className="mt-3 text-sm text-white/80">
                 {tutor.pricePerHour ? `$${tutor.pricePerHour}/hr` : "Pricing on request"}
               </div>
               {tutor.bio && (
-                <p className="mt-3 line-clamp-3 text-sm text-slate-600">{tutor.bio}</p>
+                <p className="mt-3 line-clamp-3 text-sm text-white/70">{tutor.bio}</p>
               )}
             </Link>
           ))}
@@ -217,23 +217,23 @@ function SkeletonGrid() {
       {Array.from({ length: 6 }).map((_, idx) => (
         <div
           key={idx}
-          className="animate-pulse rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          className="animate-pulse glass-card p-5"
         >
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-slate-200" />
+            <div className="h-12 w-12 rounded-full bg-white/10" />
             <div className="space-y-2">
-              <div className="h-4 w-32 rounded bg-slate-200" />
-              <div className="h-3 w-24 rounded bg-slate-200" />
+              <div className="h-4 w-32 rounded bg-white/10" />
+              <div className="h-3 w-24 rounded bg-white/10" />
             </div>
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <div className="h-3 w-20 rounded bg-slate-200" />
-            <div className="h-6 w-16 rounded-full bg-slate-200" />
+            <div className="h-3 w-20 rounded bg-white/10" />
+            <div className="h-6 w-16 rounded-full bg-white/10" />
           </div>
-          <div className="mt-3 h-3 w-24 rounded bg-slate-200" />
+          <div className="mt-3 h-3 w-24 rounded bg-white/10" />
           <div className="mt-3 space-y-2">
-            <div className="h-3 w-full rounded bg-slate-200" />
-            <div className="h-3 w-3/4 rounded bg-slate-200" />
+            <div className="h-3 w-full rounded bg-white/10" />
+            <div className="h-3 w-3/4 rounded bg-white/10" />
           </div>
         </div>
       ))}

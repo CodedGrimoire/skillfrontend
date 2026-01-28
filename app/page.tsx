@@ -32,16 +32,17 @@ export default function Home() {
   return (
     <div className="space-y-16">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 px-6 py-16 text-white shadow-lg">
-        <div className="absolute right-10 top-10 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
-        <div className="max-w-3xl space-y-6">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-200">
+      <section className="relative overflow-hidden glass-card rounded-3xl px-6 py-16">
+        <div className="absolute right-10 top-10 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl animate-pulse" />
+        <div className="absolute left-10 bottom-10 h-48 w-48 rounded-full bg-purple-500/20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="relative max-w-3xl space-y-6 z-10">
+          <p className="text-sm uppercase tracking-[0.3em] text-white/70">
             SkillBridge
           </p>
-          <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
+          <h1 className="text-4xl font-semibold leading-tight sm:text-5xl glow-text">
             Connect with Expert Tutors, Learn Anything
           </h1>
-          <p className="max-w-2xl text-lg text-slate-200/80">
+          <p className="max-w-2xl text-lg text-white/80">
             Discover vetted tutors across technology, design, business, and more.
             Book personalized sessions and level up faster with guidance that fits
             your goals.
@@ -49,11 +50,11 @@ export default function Home() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/tutors"
-              className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
+              className="glass-btn"
             >
               Browse Tutors
             </Link>
-            <span className="text-sm text-slate-200/80">
+            <span className="text-sm text-white/70">
               300+ tutors ready to teach today
             </span>
           </div>
@@ -61,11 +62,11 @@ export default function Home() {
       </section>
 
       {/* Search UI */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="glass-card">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Find your tutor</h2>
-            <p className="text-sm text-slate-600">
+            <h2 className="text-xl font-semibold text-white">Find your tutor</h2>
+            <p className="text-sm text-white/70">
               Search by subject, level, or tutor name. (UI only)
             </p>
           </div>
@@ -73,11 +74,11 @@ export default function Home() {
             <input
               type="text"
               placeholder="What do you want to learn?"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none ring-0 transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
             />
             <button
               type="button"
-              className="whitespace-nowrap rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="glass-btn whitespace-nowrap"
             >
               Search
             </button>
@@ -88,10 +89,10 @@ export default function Home() {
       {/* Featured Tutors */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">Featured Tutors</h2>
+          <h2 className="text-xl font-semibold text-white">Featured Tutors</h2>
           <Link
             href="/tutors"
-            className="text-sm font-medium text-slate-700 underline-offset-4 hover:underline"
+            className="text-sm font-medium text-white/70 underline-offset-4 hover:text-white hover:underline transition-colors"
           >
             See all
           </Link>
@@ -100,21 +101,21 @@ export default function Home() {
           {featuredTutors.map((tutor) => (
             <div
               key={tutor.name}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="glass-card p-5"
             >
               <div className="flex items-center justify-between">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-slate-200 to-slate-100" />
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                  {tutor.rating} <StarIcon className="h-3 w-3 fill-emerald-700" />
+                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-white/20" />
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">
+                  {tutor.rating} <StarIcon className="h-3 w-3 fill-emerald-300" />
                 </span>
               </div>
               <div className="mt-4 space-y-1">
-                <h3 className="text-lg font-semibold text-slate-900">{tutor.name}</h3>
-                <p className="text-sm text-slate-600">{tutor.subject}</p>
+                <h3 className="text-lg font-semibold text-white">{tutor.name}</h3>
+                <p className="text-sm text-white/70">{tutor.subject}</p>
               </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-slate-700">
+              <div className="mt-4 flex items-center justify-between text-sm text-white/80">
                 <span>{tutor.price}</span>
-                <button className="text-slate-900 underline underline-offset-4">
+                <button className="text-white hover:text-white/80 underline underline-offset-4 transition-colors">
                   Book
                 </button>
               </div>
@@ -125,14 +126,14 @@ export default function Home() {
 
       {/* Categories */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-slate-900">
+        <h2 className="text-xl font-semibold text-white">
           Popular Categories
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
             <div
               key={category}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-medium text-slate-800 shadow-sm transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-md"
+              className="glass-card px-5 py-4 text-sm font-medium text-white text-center"
             >
               {category}
             </div>
@@ -143,8 +144,8 @@ export default function Home() {
       {/* How It Works */}
       <section id="how-it-works" className="space-y-8 scroll-mt-10">
         <div className="space-y-2">
-          <h2 className="text-2xl font-semibold text-slate-900">How It Works</h2>
-          <p className="text-slate-600">
+          <h2 className="text-2xl font-semibold text-white">How It Works</h2>
+          <p className="text-white/70">
             Getting started with SkillBridge is simple. Follow these four easy steps
             to begin your learning journey with expert tutors.
           </p>
@@ -184,27 +185,27 @@ export default function Home() {
             return (
               <div
                 key={step.number}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                className="glass-card"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                   <div className="flex items-center gap-4 sm:flex-col sm:items-start">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-slate-900 to-slate-800 text-lg font-semibold text-white shadow-lg">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-lg font-semibold text-white shadow-lg glow-border">
                       {step.number}
                     </div>
-                    <div className="text-slate-600 sm:hidden">
+                    <div className="text-white/60 sm:hidden">
                       <IconComponent className="h-8 w-8" />
                     </div>
                   </div>
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-3">
-                      <span className="hidden text-slate-600 sm:inline">
+                      <span className="hidden text-white/60 sm:inline">
                         <IconComponent className="h-6 w-6" />
                       </span>
-                      <h3 className="text-xl font-semibold text-slate-900">
+                      <h3 className="text-xl font-semibold text-white">
                         {step.title}
                       </h3>
                     </div>
-                    <p className="text-slate-700 leading-relaxed">{step.description}</p>
+                    <p className="text-white/80 leading-relaxed">{step.description}</p>
                   </div>
                 </div>
               </div>
@@ -216,17 +217,17 @@ export default function Home() {
       {/* About */}
       <section id="about" className="space-y-8 scroll-mt-10">
         <div className="space-y-2">
-          <h2 className="text-2xl font-semibold text-slate-900">About SkillBridge</h2>
-          <p className="text-slate-600">
+          <h2 className="text-2xl font-semibold text-white">About SkillBridge</h2>
+          <p className="text-white/70">
             Connecting passionate learners with expert tutors to create meaningful
             learning experiences that drive real results.
           </p>
         </div>
 
         {/* Mission */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-slate-900 mb-3">Our Mission</h3>
-          <p className="text-slate-700 leading-relaxed">
+        <div className="glass-card">
+          <h3 className="text-xl font-semibold text-white mb-3">Our Mission</h3>
+          <p className="text-white/80 leading-relaxed">
             At SkillBridge, we believe that personalized, one-on-one learning is the
             most effective way to master new skills. Our platform bridges the gap
             between students seeking knowledge and tutors who are passionate about
@@ -238,7 +239,7 @@ export default function Home() {
 
         {/* Values */}
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-slate-900">Our Values</h3>
+          <h3 className="text-xl font-semibold text-white">Our Values</h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
@@ -282,15 +283,15 @@ export default function Home() {
               return (
                 <div
                   key={value.title}
-                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                  className="glass-card p-5"
                 >
-                  <div className="mb-3 text-slate-600">
+                  <div className="mb-3 text-white/60">
                     <IconComponent className="h-8 w-8" />
                   </div>
-                  <h4 className="text-lg font-semibold text-slate-900 mb-2">
+                  <h4 className="text-lg font-semibold text-white mb-2">
                     {value.title}
                   </h4>
-                  <p className="text-sm text-slate-600">{value.description}</p>
+                  <p className="text-sm text-white/70">{value.description}</p>
                 </div>
               );
             })}
@@ -298,24 +299,24 @@ export default function Home() {
         </div>
 
         {/* Stats */}
-        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 p-8 text-white shadow-lg">
-          <h3 className="text-xl font-semibold mb-6">SkillBridge by the Numbers</h3>
+        <div className="glass-card p-8 glow-border">
+          <h3 className="text-xl font-semibold mb-6 text-white">SkillBridge by the Numbers</h3>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <div className="text-3xl font-semibold mb-1">300+</div>
-              <div className="text-sm text-slate-300">Expert Tutors</div>
+              <div className="text-3xl font-semibold mb-1 text-white glow-text">300+</div>
+              <div className="text-sm text-white/70">Expert Tutors</div>
             </div>
             <div>
-              <div className="text-3xl font-semibold mb-1">5,000+</div>
-              <div className="text-sm text-slate-300">Students Served</div>
+              <div className="text-3xl font-semibold mb-1 text-white glow-text">5,000+</div>
+              <div className="text-sm text-white/70">Students Served</div>
             </div>
             <div>
-              <div className="text-3xl font-semibold mb-1">10,000+</div>
-              <div className="text-sm text-slate-300">Sessions Completed</div>
+              <div className="text-3xl font-semibold mb-1 text-white glow-text">10,000+</div>
+              <div className="text-sm text-white/70">Sessions Completed</div>
             </div>
             <div>
-              <div className="text-3xl font-semibold mb-1">4.8</div>
-              <div className="text-sm text-slate-300">Average Rating</div>
+              <div className="text-3xl font-semibold mb-1 text-white glow-text">4.8</div>
+              <div className="text-sm text-white/70">Average Rating</div>
             </div>
           </div>
         </div>

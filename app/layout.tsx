@@ -28,37 +28,37 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <div className="min-h-screen flex flex-col">
-            <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
+          <div className="min-h-screen flex flex-col relative z-10">
+            <header className="sticky top-0 z-50 glass border-b border-white/10">
               <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-                <Link href="/" className="text-lg font-semibold tracking-tight">
+                <Link href="/" className="text-lg font-semibold tracking-tight glow-text">
                   SkillBridge
                 </Link>
                 <div className="flex items-center gap-6 text-sm font-medium">
                   <Link
                     href="/"
-                    className="text-slate-700 hover:text-slate-900 transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     Home
                   </Link>
                   <Link
                     href="/tutors"
-                    className="text-slate-700 hover:text-slate-900 transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     Tutors
                   </Link>
                   <Link
                     href="/login"
-                    className="text-slate-700 hover:text-slate-900 transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
-                    className="rounded-full bg-slate-900 px-4 py-2 text-white shadow-sm ring-1 ring-slate-900/10 hover:-translate-y-0.5 hover:shadow-md transition-transform"
+                    className="glass-btn px-4 py-2"
                   >
                     Register
                   </Link>
@@ -66,19 +66,19 @@ export default function RootLayout({
               </nav>
             </header>
 
-            <main className="flex-1">
+            <main className="flex-1 relative z-10">
               <div className="mx-auto max-w-6xl px-4 py-10">{children}</div>
             </main>
 
-            <footer className="border-t border-slate-200 bg-white/70 backdrop-blur">
+            <footer className="glass border-t border-white/10 relative z-10">
               <div className="mx-auto max-w-6xl px-4 py-12">
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                   {/* Brand */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-slate-900">
+                    <h3 className="text-lg font-semibold text-white">
                       SkillBridge
                     </h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
+                    <p className="text-sm text-white/70 leading-relaxed">
                       Connecting passionate learners with expert tutors to create
                       meaningful learning experiences.
                     </p>
@@ -87,7 +87,7 @@ export default function RootLayout({
                         href="https://twitter.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-slate-600 hover:text-slate-900 transition-colors"
+                        className="text-white/60 hover:text-white transition-colors hover:scale-110"
                         aria-label="Twitter"
                       >
                         <svg
@@ -102,7 +102,7 @@ export default function RootLayout({
                         href="https://facebook.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-slate-600 hover:text-slate-900 transition-colors"
+                        className="text-white/60 hover:text-white transition-colors hover:scale-110"
                         aria-label="Facebook"
                       >
                         <svg
@@ -121,7 +121,7 @@ export default function RootLayout({
                         href="https://linkedin.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-slate-600 hover:text-slate-900 transition-colors"
+                        className="text-white/60 hover:text-white transition-colors hover:scale-110"
                         aria-label="LinkedIn"
                       >
                         <svg
@@ -136,7 +136,7 @@ export default function RootLayout({
                         href="https://instagram.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-slate-600 hover:text-slate-900 transition-colors"
+                        className="text-white/60 hover:text-white transition-colors hover:scale-110"
                         aria-label="Instagram"
                       >
                         <svg
@@ -156,14 +156,14 @@ export default function RootLayout({
 
                   {/* Quick Links */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
                       Quick Links
                     </h3>
                     <ul className="space-y-2 text-sm">
                       <li>
                         <Link
                           href="/tutors"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           Browse Tutors
                         </Link>
@@ -171,7 +171,7 @@ export default function RootLayout({
                       <li>
                         <Link
                           href="/#how-it-works"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           How It Works
                         </Link>
@@ -179,7 +179,7 @@ export default function RootLayout({
                       <li>
                         <Link
                           href="/#about"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           About Us
                         </Link>
@@ -187,7 +187,7 @@ export default function RootLayout({
                       <li>
                         <Link
                           href="/register"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           Become a Tutor
                         </Link>
@@ -197,14 +197,14 @@ export default function RootLayout({
 
                   {/* Support */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
                       Support
                     </h3>
                     <ul className="space-y-2 text-sm">
                       <li>
                         <a
                           href="mailto:support@skillbridge.com"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           Contact Us
                         </a>
@@ -212,7 +212,7 @@ export default function RootLayout({
                       <li>
                         <a
                           href="#"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           Help Center
                         </a>
@@ -220,7 +220,7 @@ export default function RootLayout({
                       <li>
                         <a
                           href="#"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           FAQ
                         </a>
@@ -228,7 +228,7 @@ export default function RootLayout({
                       <li>
                         <a
                           href="#"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           Privacy Policy
                         </a>
@@ -236,7 +236,7 @@ export default function RootLayout({
                       <li>
                         <a
                           href="#"
-                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          className="text-white/70 hover:text-white transition-colors"
                         >
                           Terms of Service
                         </a>
@@ -246,14 +246,14 @@ export default function RootLayout({
 
                   {/* Contact Info */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
                       Contact
                     </h3>
-                    <ul className="space-y-2 text-sm text-slate-600">
+                    <ul className="space-y-2 text-sm text-white/70">
                       <li>
                         <a
                           href="mailto:hello@skillbridge.com"
-                          className="hover:text-slate-900 transition-colors"
+                          className="hover:text-white transition-colors"
                         >
                           hello@skillbridge.com
                         </a>
@@ -261,13 +261,13 @@ export default function RootLayout({
                       <li>
                         <a
                           href="tel:+1234567890"
-                          className="hover:text-slate-900 transition-colors"
+                          className="hover:text-white transition-colors"
                         >
                           +1 (234) 567-890
                         </a>
                       </li>
                       <li className="pt-2">
-                        <p className="text-slate-500">
+                        <p className="text-white/60">
                           123 Learning Street
                           <br />
                           Education City, EC 12345
@@ -278,12 +278,12 @@ export default function RootLayout({
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="border-t border-slate-200 pt-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-slate-600">
-                  <span className="font-medium text-slate-700">
+                <div className="border-t border-white/10 pt-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-white/70">
+                  <span className="font-medium text-white/80">
                     © {new Date().getFullYear()} SkillBridge. All rights reserved.
                   </span>
-                  <span className="inline-flex items-center gap-1 text-slate-500">
-                    Made with <HeartIcon className="h-4 w-4 fill-rose-500 text-rose-500" /> for learners everywhere
+                  <span className="inline-flex items-center gap-1 text-white/60">
+                    Made with <HeartIcon className="h-4 w-4 fill-rose-400 text-rose-400" /> for learners everywhere
                   </span>
                 </div>
               </div>
