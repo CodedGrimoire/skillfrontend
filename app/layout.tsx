@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { Providers } from "./providers";
+import { HeartIcon } from "@/components/ui/Icons";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,18 +49,6 @@ export default function RootLayout({
                     className="text-slate-700 hover:text-slate-900 transition-colors"
                   >
                     Tutors
-                  </Link>
-                  <Link
-                    href="/how-it-works"
-                    className="text-slate-700 hover:text-slate-900 transition-colors"
-                  >
-                    How It Works
-                  </Link>
-                  <Link
-                    href="/about"
-                    className="text-slate-700 hover:text-slate-900 transition-colors"
-                  >
-                    About
                   </Link>
                   <Link
                     href="/login"
@@ -181,7 +170,7 @@ export default function RootLayout({
                       </li>
                       <li>
                         <Link
-                          href="/how-it-works"
+                          href="/#how-it-works"
                           className="text-slate-600 hover:text-slate-900 transition-colors"
                         >
                           How It Works
@@ -189,7 +178,7 @@ export default function RootLayout({
                       </li>
                       <li>
                         <Link
-                          href="/about"
+                          href="/#about"
                           className="text-slate-600 hover:text-slate-900 transition-colors"
                         >
                           About Us
@@ -293,8 +282,8 @@ export default function RootLayout({
                   <span className="font-medium text-slate-700">
                     © {new Date().getFullYear()} SkillBridge. All rights reserved.
                   </span>
-                  <span className="text-slate-500">
-                    Made with ❤️ for learners everywhere
+                  <span className="inline-flex items-center gap-1 text-slate-500">
+                    Made with <HeartIcon className="h-4 w-4 fill-rose-500 text-rose-500" /> for learners everywhere
                   </span>
                 </div>
               </div>

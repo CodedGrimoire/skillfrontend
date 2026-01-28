@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { get } from "@/src/lib/api";
+import { StarIcon } from "@/components/ui/Icons";
 
 type Tutor = {
   id: string;
@@ -186,8 +187,14 @@ export default function TutorsPage() {
               </div>
               <div className="mt-4 flex items-center justify-between text-sm text-slate-700">
                 <span>{tutor.category ?? "General"}</span>
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                  {tutor.rating ? `${tutor.rating.toFixed(1)} ★` : "New"}
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  {tutor.rating ? (
+                    <>
+                      {tutor.rating.toFixed(1)} <StarIcon className="h-3 w-3 fill-emerald-700" />
+                    </>
+                  ) : (
+                    "New"
+                  )}
                 </span>
               </div>
               <div className="mt-3 text-sm text-slate-700">

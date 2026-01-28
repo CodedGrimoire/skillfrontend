@@ -6,6 +6,7 @@ import { get, post } from "@/src/lib/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { useToast } from "@/src/context/ToastContext";
 import { Spinner } from "@/components/ui/Spinner";
+import { StarIcon } from "@/components/ui/Icons";
 
 type TutorDetail = {
   id: string;
@@ -111,10 +112,15 @@ export default function TutorDetailPage() {
                 {tutor.skills?.join(" • ") || "Multidisciplinary Tutor"}
               </p>
               <div className="flex items-center gap-3 text-sm text-slate-700">
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                  {tutor.averageRating ?? tutor.rating
-                    ? `${(tutor.averageRating ?? tutor.rating)!.toFixed(1)} ★`
-                    : "New"}
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  {tutor.averageRating ?? tutor.rating ? (
+                    <>
+                      {(tutor.averageRating ?? tutor.rating)!.toFixed(1)}{" "}
+                      <StarIcon className="h-3 w-3 fill-emerald-700" />
+                    </>
+                  ) : (
+                    "New"
+                  )}
                 </span>
                 <span>
                   {tutor.pricePerHour ? `$${tutor.pricePerHour}/hr` : "Rate on request"}
@@ -195,8 +201,8 @@ export default function TutorDetailPage() {
               >
                 <div className="flex items-center justify-between text-sm font-semibold text-slate-800">
                   <span>{review.author}</span>
-                  <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs text-emerald-700">
-                    {review.rating} ★
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs text-emerald-700">
+                    {review.rating} <StarIcon className="h-3 w-3 fill-emerald-700" />
                   </span>
                 </div>
                 <p className="mt-2 text-sm text-slate-700">{review.comment}</p>
