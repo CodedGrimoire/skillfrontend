@@ -22,10 +22,15 @@ export default function AdminCategoriesPage() {
   const fetchCategories = async () => {
     setError(null);
     try {
-      const res = await get<Category[]>("/api/admin/categories");
-      setCategories(res.data);
+      const res = await get<{ success?: boolean; categories?: Category[] } | Category[]>("/api/admin/categories");
+      // Handle both wrapped and unwrapped responses
+      const categoriesArray = Array.isArray(res.data) 
+        ? res.data 
+        : (res.data as any)?.categories || (res.data as any)?.data || [];
+      setCategories(Array.isArray(categoriesArray) ? categoriesArray : []);
     } catch (err) {
       setError("Unable to load categories.");
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -68,21 +73,26 @@ export default function AdminCategoriesPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-slate-900">Categories</h1>
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-white glow-text">Categories</h1>
+        <p className="text-sm text-white/70">Manage subject categories</p>
+      </header>
+      
+      <div className="glass-card space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addCategory()}
             placeholder="Add a category"
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+            className="glass-input flex-1"
           />
           <button
             type="button"
             onClick={addCategory}
-            disabled={saving}
-            className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={saving || !newCategory.trim()}
+            className="glass-btn px-6 py-3 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? (
               <span className="inline-flex items-center gap-2">
@@ -90,35 +100,39 @@ export default function AdminCategoriesPage() {
                 Saving...
               </span>
             ) : (
-              "Add"
+              "Add Category"
             )}
           </button>
         </div>
+        
         {error && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            {error}
+          <div className="glass-card px-6 py-4 border-rose-500/30 bg-rose-500/10">
+            <p className="text-sm text-rose-300">{error}</p>
           </div>
         )}
+        
         {loading ? (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, idx) => (
-              <div key={idx} className="h-10 rounded-xl bg-slate-200 animate-pulse" />
+              <div key={idx} className="h-14 glass rounded-xl animate-pulse border border-white/10" />
             ))}
           </div>
         ) : categories.length === 0 ? (
-          <p className="text-sm text-slate-600">No categories yet.</p>
+          <div className="text-center py-12">
+            <p className="text-sm text-white/60">No categories yet. Add one above!</p>
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-800"
+                className="glass p-4 rounded-xl border border-white/10 flex items-center justify-between hover:border-white/20 transition-all"
               >
-                <span>{cat.name}</span>
+                <span className="text-white font-medium">{cat.name}</span>
                 <button
                   onClick={() => deleteCategory(cat.id)}
                   disabled={saving}
-                  className="text-xs font-semibold text-rose-700 underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="text-xs font-semibold text-rose-300 hover:text-rose-200 underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
                 >
                   Delete
                 </button>

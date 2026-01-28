@@ -56,41 +56,45 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-slate-900">Users</h1>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-white glow-text">Users</h1>
+        <p className="text-sm text-white/70">Manage all platform users</p>
+      </header>
+      
       {loading ? (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="h-12 rounded-xl bg-slate-200 animate-pulse" />
+            <div key={idx} className="h-16 glass rounded-xl animate-pulse border border-white/10" />
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
+        <div className="glass-card px-6 py-4 border-rose-500/30 bg-rose-500/10">
+          <p className="text-sm text-rose-300">{error}</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="grid grid-cols-4 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">
+        <div className="glass-card overflow-hidden">
+          <div className="grid grid-cols-4 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white/70 border-b border-white/10">
             <span>Name</span>
             <span>Email</span>
             <span>Role</span>
             <span>Status</span>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-white/10">
             {users.map((u) => (
               <div
                 key={u.id}
-                className="grid grid-cols-4 items-center px-4 py-3 text-sm text-slate-800"
+                className="grid grid-cols-4 items-center px-6 py-4 text-sm hover:bg-white/5 transition-colors"
               >
-                <span className="font-medium text-slate-900">{u.name}</span>
-                <span className="text-slate-600">{u.email}</span>
-                <span className="text-slate-700">{u.role}</span>
+                <span className="font-medium text-white">{u.name}</span>
+                <span className="text-white/70">{u.email}</span>
+                <span className="text-white/80">{u.role}</span>
                 <div className="flex items-center gap-3">
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    className={`rounded-full px-3 py-1 text-xs font-semibold border ${
                       u.status === "BANNED"
-                        ? "bg-rose-50 text-rose-700"
-                        : "bg-emerald-50 text-emerald-700"
+                        ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                        : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
                     }`}
                   >
                     {u.status ?? "ACTIVE"}
@@ -99,7 +103,7 @@ export default function AdminUsersPage() {
                     <button
                       onClick={() => toggleStatus(u.id, u.status)}
                       disabled={actionId === u.id}
-                      className="text-xs font-semibold text-slate-700 underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="text-xs font-semibold text-white/70 hover:text-white underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
                     >
                       {actionId === u.id ? (
                         <span className="inline-flex items-center gap-2">

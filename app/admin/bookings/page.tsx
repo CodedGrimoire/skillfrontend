@@ -36,44 +36,48 @@ export default function AdminBookingsPage() {
   }, []);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-slate-900">All Bookings</h1>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-white glow-text">All Bookings</h1>
+        <p className="text-sm text-white/70">View and manage all platform bookings</p>
+      </header>
+      
       {loading ? (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="h-12 rounded-xl bg-slate-200 animate-pulse" />
+            <div key={idx} className="h-16 glass rounded-xl animate-pulse border border-white/10" />
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
+        <div className="glass-card px-6 py-4 border-rose-500/30 bg-rose-500/10">
+          <p className="text-sm text-rose-300">{error}</p>
         </div>
       ) : bookings.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white px-4 py-6 text-sm text-slate-700">
-          No bookings found.
+        <div className="glass-card px-6 py-12 text-center">
+          <p className="text-sm text-white/60">No bookings found.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="grid grid-cols-5 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">
+        <div className="glass-card overflow-hidden">
+          <div className="grid grid-cols-5 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white/70 border-b border-white/10">
             <span>Student</span>
             <span>Tutor</span>
             <span>Date</span>
             <span>Status</span>
             <span>Time</span>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-white/10">
             {bookings.map((b) => (
               <div
                 key={b.id}
-                className="grid grid-cols-5 items-center px-4 py-3 text-sm text-slate-800"
+                className="grid grid-cols-5 items-center px-6 py-4 text-sm hover:bg-white/5 transition-colors"
               >
-                <span className="font-medium text-slate-900">{b.studentName}</span>
-                <span className="text-slate-700">{b.tutorName}</span>
-                <span className="text-slate-600">{b.date}</span>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="font-medium text-white">{b.studentName}</span>
+                <span className="text-white/80">{b.tutorName}</span>
+                <span className="text-white/70">{b.date}</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white border border-white/20">
                   {b.status}
                 </span>
-                <span className="text-slate-600">{b.time}</span>
+                <span className="text-white/70">{b.time}</span>
               </div>
             ))}
           </div>
