@@ -4,6 +4,7 @@ import Link from "next/link";
 import "./globals.css";
 import { Providers } from "./providers";
 import { HeartIcon } from "@/components/ui/Icons";
+import { NavLinks } from "@/components/NavLinks";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,30 +39,7 @@ export default function RootLayout({
                   SkillBridge
                 </Link>
                 <div className="flex items-center gap-6 text-sm font-medium">
-                  <Link
-                    href="/"
-                    className="text-white/80 hover:text-white transition-colors"
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    href="/tutors"
-                    className="text-white/80 hover:text-white transition-colors"
-                  >
-                    Tutors
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="text-white/80 hover:text-white transition-colors"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="glass-btn px-4 py-2"
-                  >
-                    Register
-                  </Link>
+                  <NavLinks />
                 </div>
               </nav>
             </header>
