@@ -49,10 +49,41 @@ export default function TutorsPage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await get<Tutor[]>(`/api/tutors${queryString}`);
-        setTutors(res.data);
+        const res = await get<{ tutors?: Tutor[] } | Tutor[]>(
+          `/api/tutors${queryString}`,
+        );
+        console.log("API RESPONSE:", res.data);
+        const payload: any = res.data ?? {};
+        
+        // Handle different response formats
+        let list: Tutor[] = [];
+        if (Array.isArray(payload)) {
+          list = payload;
+        } else if (Array.isArray(payload.tutors)) {
+          list = payload.tutors;
+        } else if (Array.isArray(payload.data)) {
+          list = payload.data;
+        } else if (Array.isArray(payload.items)) {
+          list = payload.items;
+        }
+        
+        // Map backend response structure to frontend Tutor type
+        const mappedTutors: Tutor[] = list.map((tutor: any) => ({
+          id: tutor.id,
+          name: tutor.name,
+          subject: tutor.subject || tutor.tutorProfile?.subject || "",
+          category: tutor.category || tutor.tutorProfile?.category,
+          pricePerHour: tutor.pricePerHour || tutor.tutorProfile?.hourlyRate,
+          rating: tutor.rating || tutor.tutorProfile?.rating,
+          bio: tutor.bio || tutor.tutorProfile?.bio,
+          avatarUrl: tutor.avatarUrl || tutor.tutorProfile?.avatarUrl,
+        }));
+        
+        setTutors(mappedTutors);
       } catch (err) {
+        console.error("Error fetching tutors:", err);
         setError("Could not load tutors. Please try again.");
+        setTutors([]);
       } finally {
         setLoading(false);
       }
