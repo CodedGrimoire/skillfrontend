@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { get, put } from "@/src/lib/api";
+import { Spinner } from "@/components/ui/Spinner";
+import { useToast } from "@/src/context/ToastContext";
 
 type TutorProfile = {
   name: string;
@@ -20,6 +22,7 @@ export default function TutorProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -53,8 +56,10 @@ export default function TutorProfilePage() {
           : [],
       });
       setMessage("Profile updated.");
+      showToast("Profile updated", "success");
     } catch (err) {
       setMessage("Failed to update profile.");
+      showToast("Profile update failed", "error");
     } finally {
       setSaving(false);
     }
@@ -120,7 +125,14 @@ export default function TutorProfilePage() {
             disabled={saving}
             className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Saving..." : "Save changes"}
+            {saving ? (
+              <span className="inline-flex items-center gap-2">
+                <Spinner size={14} />
+                Saving...
+              </span>
+            ) : (
+              "Save changes"
+            )}
           </button>
         </form>
       )}

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
 import { redirectForRole } from "@/src/lib/auth";
 import { useAuth } from "@/src/context/AuthContext";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 const roles = [
   { value: "STUDENT", label: "Student" },
@@ -14,6 +16,7 @@ const roles = [
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { showToast } = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,9 +44,11 @@ export default function RegisterPage() {
 
       const { token, role: userRole } = res.data;
       await login(token);
+      showToast("Account created", "success");
       router.push(redirectForRole(userRole));
     } catch (err: unknown) {
       setError("Registration failed. Please try again.");
+      showToast("Registration failed", "error");
     } finally {
       setLoading(false);
     }
@@ -70,6 +75,7 @@ export default function RegisterPage() {
             onChange={(e) => setName(e.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
             placeholder="Alex Johnson"
+            required
           />
         </div>
 
@@ -84,6 +90,7 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
             placeholder="you@example.com"
+            required
           />
         </div>
 
@@ -98,6 +105,7 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
             placeholder="••••••••"
+            required
           />
         </div>
 
@@ -130,7 +138,14 @@ export default function RegisterPage() {
           disabled={loading}
           className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Creating account..." : "Register"}
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <Spinner size={14} />
+              Creating account...
+            </span>
+          ) : (
+            "Register"
+          )}
         </button>
       </form>
     </div>

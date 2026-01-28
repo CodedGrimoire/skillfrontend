@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
 import { redirectForRole } from "@/src/lib/auth";
 import { useAuth } from "@/src/context/AuthContext";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -32,9 +35,11 @@ export default function LoginPage() {
 
       const { token, role } = res.data;
       await login(token);
+      showToast("Logged in successfully", "success");
       router.push(redirectForRole(role));
     } catch (err: unknown) {
       setError("Login failed. Please check your credentials.");
+      showToast("Login failed", "error");
     } finally {
       setLoading(false);
     }
@@ -61,6 +66,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
             placeholder="you@example.com"
+            required
           />
         </div>
 
@@ -75,6 +81,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
             placeholder="••••••••"
+            required
           />
         </div>
 
@@ -89,7 +96,14 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Signing in..." : "Login"}
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <Spinner size={14} />
+              Signing in...
+            </span>
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
     </div>

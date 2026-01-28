@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { get, patch } from "@/src/lib/api";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 type User = {
   id: string;
@@ -16,6 +18,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const fetchUsers = async () => {
     setError(null);
@@ -40,8 +43,10 @@ export default function AdminUsersPage() {
         status: current === "BANNED" ? "ACTIVE" : "BANNED",
       });
       await fetchUsers();
+      showToast("Status updated", "success");
     } catch (err) {
       setError("Action failed. Please try again.");
+      showToast("Action failed", "error");
     } finally {
       setActionId(null);
     }
@@ -93,7 +98,14 @@ export default function AdminUsersPage() {
                       disabled={actionId === u.id}
                       className="text-xs font-semibold text-slate-700 underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {u.status === "BANNED" ? "Unban" : "Ban"}
+                      {actionId === u.id ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner size={12} />
+                          Working...
+                        </span>
+                      ) : (
+                        u.status === "BANNED" ? "Unban" : "Ban"
+                      )}
                     </button>
                   )}
                 </div>

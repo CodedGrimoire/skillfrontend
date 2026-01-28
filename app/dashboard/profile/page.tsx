@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { get, put } from "@/src/lib/api";
 import { useAuth } from "@/src/context/AuthContext";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 type Profile = {
   name: string;
@@ -11,6 +13,7 @@ type Profile = {
 
 export default function StudentProfilePage() {
   const { user, refresh } = useAuth();
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<Profile>({ name: "", email: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,9 +42,11 @@ export default function StudentProfilePage() {
       setSaving(true);
       await put("/api/students/profile", profile);
       setMessage("Profile updated.");
+      showToast("Profile updated", "success");
       refresh();
     } catch (err) {
       setMessage("Failed to update profile.");
+      showToast("Profile update failed", "error");
     } finally {
       setSaving(false);
     }
@@ -84,7 +89,14 @@ export default function StudentProfilePage() {
             disabled={saving}
             className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Saving..." : "Save changes"}
+            {saving ? (
+              <span className="inline-flex items-center gap-2">
+                <Spinner size={14} />
+                Saving...
+              </span>
+            ) : (
+              "Save changes"
+            )}
           </button>
         </form>
       )}

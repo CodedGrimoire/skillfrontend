@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { get, post } from "@/src/lib/api";
+import { Spinner } from "@/components/ui/Spinner";
+import { useToast } from "@/src/context/ToastContext";
 
 type DaySlots = {
   day: string;
@@ -16,6 +18,7 @@ export default function TutorAvailabilityPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -55,8 +58,10 @@ export default function TutorAvailabilityPage() {
       setSaving(true);
       await post("/api/tutor/availability", availability);
       setMessage("Availability saved.");
+      showToast("Availability saved", "success");
     } catch (err) {
       setMessage("Failed to save availability.");
+      showToast("Save failed", "error");
     } finally {
       setSaving(false);
     }
@@ -136,7 +141,14 @@ export default function TutorAvailabilityPage() {
             onClick={saveAvailability}
             className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Saving..." : "Save availability"}
+            {saving ? (
+              <span className="inline-flex items-center gap-2">
+                <Spinner size={14} />
+                Saving...
+              </span>
+            ) : (
+              "Save availability"
+            )}
           </button>
         </div>
       )}

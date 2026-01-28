@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { get, post } from "@/src/lib/api";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 type Booking = {
   id: string;
@@ -21,6 +23,7 @@ export default function StudentBookingsPage() {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -110,8 +113,10 @@ export default function StudentBookingsPage() {
                     comment,
                   });
                   setModalBooking(null);
+                  showToast("Review submitted", "success");
                 } catch (err) {
                   setSubmitError("Failed to submit review. Please try again.");
+                  showToast("Review failed", "error");
                 } finally {
                   setSubmitting(false);
                 }
@@ -159,7 +164,14 @@ export default function StudentBookingsPage() {
                   disabled={submitting}
                   className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {submitting ? "Submitting..." : "Submit review"}
+                  {submitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <Spinner size={14} />
+                      Submitting...
+                    </span>
+                  ) : (
+                    "Submit review"
+                  )}
                 </button>
               </div>
             </form>

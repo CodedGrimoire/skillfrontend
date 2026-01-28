@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { get, post } from "@/src/lib/api";
 import { useAuth } from "@/src/context/AuthContext";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 type TutorDetail = {
   id: string;
@@ -20,6 +22,7 @@ type TutorDetail = {
 export default function TutorDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const [tutor, setTutor] = useState<TutorDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,10 +80,12 @@ export default function TutorDetailPage() {
         time,
       });
       setBookingSuccess("Session booked! Check your dashboard for details.");
+      showToast("Booking confirmed", "success");
       setDate("");
       setTime("");
     } catch (err) {
       setBookingError("Booking failed. Please try again.");
+      showToast("Booking failed", "error");
     } finally {
       setBookingLoading(false);
     }
@@ -228,6 +233,7 @@ export default function TutorDetailPage() {
               onChange={(e) => setDate(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
               disabled={!isStudent}
+              required
             />
           </div>
           <div className="space-y-2">
@@ -237,6 +243,7 @@ export default function TutorDetailPage() {
               onChange={(e) => setTime(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
               disabled={!isStudent}
+              required
             >
               <option value="">Select time</option>
               {availabilitySlots.map((slot) => (
@@ -264,7 +271,16 @@ export default function TutorDetailPage() {
               disabled={!isStudent || bookingLoading}
               className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {bookingLoading ? "Booking..." : isStudent ? "Book Session" : "Login as student"}
+              {bookingLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner size={14} />
+                  Booking...
+                </span>
+              ) : isStudent ? (
+                "Book Session"
+              ) : (
+                "Login as student"
+              )}
             </button>
           </div>
         </form>

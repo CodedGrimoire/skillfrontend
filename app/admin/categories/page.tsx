@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { get, post } from "@/src/lib/api";
 import api from "@/src/lib/api";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 
 type Category = {
   id: string;
@@ -15,6 +17,7 @@ export default function AdminCategoriesPage() {
   const [error, setError] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState("");
   const [saving, setSaving] = useState(false);
+  const { showToast } = useToast();
 
   const fetchCategories = async () => {
     setError(null);
@@ -40,8 +43,10 @@ export default function AdminCategoriesPage() {
       await post("/api/admin/categories", { name: newCategory.trim() });
       setNewCategory("");
       await fetchCategories();
+      showToast("Category added", "success");
     } catch (err) {
       setError("Failed to add category.");
+      showToast("Add failed", "error");
     } finally {
       setSaving(false);
     }
@@ -53,8 +58,10 @@ export default function AdminCategoriesPage() {
     try {
       await api.delete(`/api/admin/categories/${id}`);
       await fetchCategories();
+      showToast("Category deleted", "success");
     } catch (err) {
       setError("Failed to delete category.");
+      showToast("Delete failed", "error");
     } finally {
       setSaving(false);
     }
@@ -77,7 +84,14 @@ export default function AdminCategoriesPage() {
             disabled={saving}
             className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Saving..." : "Add"}
+            {saving ? (
+              <span className="inline-flex items-center gap-2">
+                <Spinner size={14} />
+                Saving...
+              </span>
+            ) : (
+              "Add"
+            )}
           </button>
         </div>
         {error && (
