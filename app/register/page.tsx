@@ -8,6 +8,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useToast } from "@/src/context/ToastContext";
 import { Spinner } from "@/components/ui/Spinner";
 import { EyeIcon, EyeOffIcon } from "@/components/ui/Icons";
+import { AuthGate } from "@/src/components/AuthGate";
 
 const roles = [
   { value: "STUDENT", label: "Student" },
@@ -47,7 +48,7 @@ export default function RegisterPage() {
       const { token, role: userRole } = res.data;
       await login(token);
       showToast("Account created", "success");
-      router.push(redirectForRole(userRole));
+      router.replace(redirectForRole(userRole));
     } catch (err: unknown) {
       setError("Registration failed. Please try again.");
       showToast("Registration failed", "error");
@@ -57,15 +58,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md glass-card">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold text-white">Create account</h1>
-        <p className="text-sm text-white/70">
-          Join as a student or tutor to start learning or teaching.
-        </p>
-      </div>
+    <AuthGate mode="publicOnly">
+      <div className="mx-auto max-w-md glass-card">
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-semibold text-white">Create account</h1>
+          <p className="text-sm text-white/70">
+            Join as a student or tutor to start learning or teaching.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-white/90" htmlFor="name">
             Name
@@ -165,5 +167,6 @@ export default function RegisterPage() {
         </button>
       </form>
     </div>
+    </AuthGate>
   );
 }

@@ -22,6 +22,7 @@ type AuthContextValue = {
   user: User | null;
   token: string | null;
   loading: boolean;
+  authLoading: boolean; // Alias for loading for clarity
   login: (token: string) => Promise<void>;
   logout: () => void;
   refresh: () => Promise<void>;
@@ -32,44 +33,52 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Start with loading = true
 
-  const fetchMe = useCallback(
-    async (tokenValue?: string) => {
-      const activeToken = tokenValue ?? token;
-      if (!activeToken) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await get<User>("/api/auth/me");
-        setUser(res.data);
-      } catch (err) {
-        // Token might be invalid/expired; clear stored creds.
+  // Fetch user data from API
+  const fetchMe = useCallback(async (tokenValue: string) => {
+    try {
+      const res = await get<User>("/api/auth/me");
+      setUser(res.data);
+      setToken(tokenValue);
+    } catch (err) {
+      // Token is invalid/expired - clear everything
+      if (typeof window !== "undefined") {
         localStorage.removeItem("token");
-        setToken(null);
-        setUser(null);
-      } finally {
-        setLoading(false);
       }
-    },
-    [token],
-  );
-
-  useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (stored) {
-      setToken(stored);
-      fetchMe(stored);
-    } else {
-      setLoading(false);
+      setToken(null);
+      setUser(null);
     }
+  }, []);
+
+  // Initialize auth state on mount
+  useEffect(() => {
+    // Only run on client
+    if (typeof window === "undefined") {
+      setLoading(false);
+      return;
+    }
+
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem("token");
+      
+      if (storedToken) {
+        // Token exists - fetch user data
+        await fetchMe(storedToken);
+      }
+      
+      // Always set loading to false after initialization
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, [fetchMe]);
 
   const login = useCallback(
     async (newToken: string) => {
-      localStorage.setItem("token", newToken);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", newToken);
+      }
       setToken(newToken);
       await fetchMe(newToken);
     },
@@ -77,18 +86,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+    }
     setToken(null);
     setUser(null);
   }, []);
 
   const refresh = useCallback(async () => {
-    setLoading(true);
-    await fetchMe();
-  }, [fetchMe]);
+    if (token) {
+      await fetchMe(token);
+    }
+  }, [token, fetchMe]);
 
   const value = useMemo(
-    () => ({ user, token, loading, login, logout, refresh }),
+    () => ({ user, token, loading, authLoading: loading, login, logout, refresh }),
     [user, token, loading, login, logout, refresh],
   );
 
