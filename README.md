@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Assignment 4 - Full-Stack Project
 
-## Getting Started
+## � Find Your Assignment
 
-First, run the development server:
+> 💡 Check your Student ID by clicking your **profile image** on the [Programming Hero Website](https://web.programming-hero.com/profile).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Last Digit of Student ID | Assignment |
+|:------------------------:|------------|
+| **0, 1, 2, 3** | [SkillBridge](./1-SkillBridge.md) 🎓 |
+| **4, 5, 6** | [FoodHub](./2-FoodHub.md) 🍱 |
+| **7, 8, 9** | [MediStore](./3-MediStore.md) 💊 |
+
+---
+
+## ⚠️ Mandatory Requirements
+
+> [!CAUTION]
+> **MANDATORY - READ CAREFULLY**
+> 
+> The following **FIVE requirements are MANDATORY**:
+> 1. **Homepage** - 4 meaningful sections + Navbar + Footer
+> 2. **UI/UX** - Clean, responsive design with consistent colors & spacing
+> 3. **Commits** - 30 meaningful commits (15 frontend + 15 backend)
+> 4. **Error Handling** - Validation, error messages, loading states
+> 5. **Admin Credentials** - Provide working admin email & password
+>
+> ❌ **Failure to complete any of these = 0 MARKS**
+
+---
+
+## 📊 Marks Distribution
+
+| # | Category | Weight | Details |
+|:-:|----------|:------:|---------|
+| 1 | Homepage Design | 20% | 4 sections + Navbar + Footer |
+| 2 | UI/UX Quality | 20% | Responsive, consistent styling |
+| 3 | Commit History | 10% | 30 meaningful commits |
+| 4 | Error Handling | 10% | Validation, loading states |
+| 5 | Core Functionality | 30% | Auth, CRUD, role-based access |
+| 6 | Video Explanation | 10% | 5-10 min demo video |
+
+---
+
+## 📅 Timeline
+
+| Deadline | Maximum Marks |
+|----------|:-------------:|
+| **January 31, 2026, 11:59 PM** | 60 Marks |
+| **February 01, 2026, 11:59 PM** | 50 Marks |
+| **After February 01** | 30 Marks |
+
+---
+
+## 📦 What to Submit
+
+| Item | Required |
+|------|:--------:|
+| Frontend GitHub Repo | ✅ |
+| Backend GitHub Repo | ✅ |
+| Frontend Live URL | ✅ |
+| Backend Live URL | ✅ |
+| Demo Video (5-10 min) | ✅ |
+| Admin Credentials | ✅ |
+
+**Example:**
+```
+Frontend Repo    : https://github.com/your-username/skillbridge-frontend
+Backend Repo     : https://github.com/your-username/skillbridge-backend
+Frontend Live    : https://skillbridge.vercel.app
+Backend Live     : https://skillbridge-api.vercel.app
+Demo Video       : https://drive.google.com/file/d/xxx/view
+Admin Email      : admin@skillbridge.com
+Admin Password   : admin123
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🎥 Video Explanation Guide
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Duration:** 5-10 minutes | **Language:** English or Bengali
 
-## Learn More
+**What to Cover:**
+1. Project overview & features
+2. Show all 3 roles working (Customer/Student, Provider/Seller/Tutor, Admin)
+3. Demonstrate CRUD operations
+4. Show error handling in action
 
-To learn more about Next.js, take a look at the following resources:
+**Recording Options:**
+- **Loom** - Record & share link directly
+- **OBS** - Record & upload to Google Drive (set "Anyone with link" access)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tech Stack
 
-## Deploy on Vercel
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| Next.js | App Router, SSR/SSG |
+| TypeScript | Type safety |
+| Tailwind CSS | Styling (or any CSS framework) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| Node.js + Express | REST API |
+| Postgres + Prisma | Database |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deployment
+| Service | Purpose |
+|---------|---------|
+| Vercel/Render | Frontend & Backend deployment |
+
+---
+
+## 🎯 Key Rules
+
+- **Roles**: Each project has 3 fixed roles. Users select during registration. Admin = seeded.
+- **Payment**: No payment integration. All orders are Cash on Delivery.
+- **Flexibility**: Routes/endpoints are examples. Modify as needed.
+
+---
+
+## ⚠️ Important Notes
+
+> **Plagiarism** = 0 Marks. All work must be original.
+
+**Good luck! Build something you're proud of.** 🚀

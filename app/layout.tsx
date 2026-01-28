@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +26,58 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900`}
       >
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
+            <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+              <Link href="/" className="text-lg font-semibold tracking-tight">
+                SkillBridge
+              </Link>
+              <div className="flex items-center gap-6 text-sm font-medium">
+                <Link
+                  href="/"
+                  className="text-slate-700 hover:text-slate-900 transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/tutors"
+                  className="text-slate-700 hover:text-slate-900 transition-colors"
+                >
+                  Tutors
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-slate-700 hover:text-slate-900 transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-full bg-slate-900 px-4 py-2 text-white shadow-sm ring-1 ring-slate-900/10 hover:-translate-y-0.5 hover:shadow-md transition-transform"
+                >
+                  Register
+                </Link>
+              </div>
+            </nav>
+          </header>
+
+          <main className="flex-1">
+            <div className="mx-auto max-w-6xl px-4 py-10">{children}</div>
+          </main>
+
+          <footer className="border-t border-slate-200 bg-white/70 backdrop-blur">
+            <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+              <span className="font-medium text-slate-700">
+                SkillBridge · Learn from the best
+              </span>
+              <span className="text-slate-500">
+                © {new Date().getFullYear()} SkillBridge. All rights reserved.
+              </span>
+            </div>
+          </footer>
+        </div>
       </body>
     </html>
   );
