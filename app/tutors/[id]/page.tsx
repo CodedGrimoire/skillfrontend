@@ -12,6 +12,7 @@ type TutorDetail = {
   skills?: string[];
   pricePerHour?: number;
   rating?: number;
+  averageRating?: number;
   availability?: { day: string; slots: string[] }[];
   reviews?: { id: string; author: string; comment: string; rating: number }[];
 };
@@ -106,7 +107,9 @@ export default function TutorDetailPage() {
               </p>
               <div className="flex items-center gap-3 text-sm text-slate-700">
                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                  {tutor.rating ? `${tutor.rating.toFixed(1)} ★` : "New"}
+                  {tutor.averageRating ?? tutor.rating
+                    ? `${(tutor.averageRating ?? tutor.rating)!.toFixed(1)} ★`
+                    : "New"}
                 </span>
                 <span>
                   {tutor.pricePerHour ? `$${tutor.pricePerHour}/hr` : "Rate on request"}

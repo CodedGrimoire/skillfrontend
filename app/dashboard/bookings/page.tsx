@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { get } from "@/src/lib/api";
+import { get, post } from "@/src/lib/api";
 
 type Booking = {
   id: string;
@@ -9,12 +9,18 @@ type Booking = {
   date: string;
   time: string;
   status: "CONFIRMED" | "COMPLETED" | "CANCELLED";
+  tutorId: string;
 };
 
 export default function StudentBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalBooking, setModalBooking] = useState<Booking | null>(null);
+  const [rating, setRating] = useState<number>(5);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -61,11 +67,103 @@ export default function StudentBookingsPage() {
                   {b.date} • {b.time}
                 </p>
               </div>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800">
-                {b.status}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800">
+                  {b.status}
+                </span>
+                {b.status === "COMPLETED" && (
+                  <button
+                    onClick={() => {
+                      setModalBooking(b);
+                      setRating(5);
+                      setComment("");
+                      setSubmitError(null);
+                    }}
+                    className="text-xs font-semibold text-slate-700 underline underline-offset-4"
+                  >
+                    Leave review
+                  </button>
+                )}
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {modalBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h2 className="text-lg font-semibold text-slate-900">
+              Review {modalBooking.tutorName}
+            </h2>
+            <form
+              className="mt-4 space-y-4"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setSubmitError(null);
+                try {
+                  setSubmitting(true);
+                  await post("/api/reviews", {
+                    tutorId: modalBooking.tutorId,
+                    bookingId: modalBooking.id,
+                    rating,
+                    comment,
+                  });
+                  setModalBooking(null);
+                } catch (err) {
+                  setSubmitError("Failed to submit review. Please try again.");
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-800">Rating</label>
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(Number(e.target.value))}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+                >
+                  {[5, 4, 3, 2, 1].map((r) => (
+                    <option key={r} value={r}>
+                      {r} Stars
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-800">Comment</label>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  rows={4}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+                  placeholder="Share your learning experience..."
+                />
+              </div>
+              {submitError && (
+                <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                  {submitError}
+                </div>
+              )}
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setModalBooking(null)}
+                  className="text-sm font-semibold text-slate-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {submitting ? "Submitting..." : "Submit review"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
