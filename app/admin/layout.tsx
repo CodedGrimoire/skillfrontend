@@ -16,11 +16,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AuthGate mode="protected" allowedRoles={["ADMIN"]}>
-      <div className="grid gap-6 lg:grid-cols-[260px,1fr]">
-        <aside className="glass-card">
+      <div className="flex gap-6 min-h-screen">
+        {/* Fixed Left Sidebar */}
+        <aside className="glass-card w-64 flex-shrink-0 sticky top-6 h-fit">
           <div className="mb-6">
-            <h2 className="text-lg font-bold text-white mb-1">Admin Console</h2>
-            <div className="h-0.5 w-12 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 rounded-full" />
+            <h2 className="text-xl font-bold text-white mb-2 glow-text">Admin Console</h2>
+            <div className="h-0.5 w-16 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 rounded-full" />
           </div>
           <nav className="space-y-2">
             {navItems.map((item) => {
@@ -44,7 +45,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             })}
           </nav>
         </aside>
-        <section>{children}</section>
+        
+        {/* Main Content Area */}
+        <section className="flex-1 min-w-0">
+          {children}
+        </section>
       </div>
     </AuthGate>
   );

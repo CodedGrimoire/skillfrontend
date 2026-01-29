@@ -150,13 +150,31 @@ export default function TutorDetailPage() {
   }, [tutor]);
 
   const availabilitySlots = useMemo(() => {
+    const normalizeTo24h = (slot: string) => {
+      const trimmed = slot.trim();
+      const match = trimmed.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (!match) return trimmed; // assume already 24h (HH:mm) or ISO-compatible
+      let [_, h, m, meridiem] = match;
+      let hour = parseInt(h, 10);
+      if (meridiem.toUpperCase() === "PM" && hour !== 12) hour += 12;
+      if (meridiem.toUpperCase() === "AM" && hour === 12) hour = 0;
+      return `${hour.toString().padStart(2, "0")}:${m}`;
+    };
+
     if (!parsedAvailability) {
-      // If availability is a plain string, return empty array (time slots won't be available)
-      return [];
+      // Fallback: offer standard working hours if no structured availability is provided
+      const defaultHours = Array.from({ length: 9 }, (_, i) => 9 + i); // 9am - 5pm
+      return defaultHours.map((hour) => {
+        const value = `${hour.toString().padStart(2, "0")}:00`;
+        return { value, label: value };
+      });
     }
-    
+
     return parsedAvailability.flatMap((day: any) =>
-      (day.slots || []).map((slot: string) => `${day.day || ''} ${slot}`)
+      (day.slots || []).map((slot: string) => ({
+        value: normalizeTo24h(slot), // expected to be HH:mm or ISO-compliant time fragment
+        label: `${day.day ? day.day + " " : ""}${slot}`,
+      }))
     );
   }, [parsedAvailability]);
 
@@ -375,11 +393,16 @@ export default function TutorDetailPage() {
             >
               <option value="">Select time</option>
               {availabilitySlots.map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
+                <option key={slot.value} value={slot.value}>
+                  {slot.label}
                 </option>
               ))}
             </select>
+            {!parsedAvailability && (
+              <p className="text-xs text-amber-200/80">
+                Tutor availability not set; showing standard hours (09:00-17:00).
+              </p>
+            )}
           </div>
 
           {bookingError && (

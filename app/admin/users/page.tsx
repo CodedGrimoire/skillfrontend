@@ -74,7 +74,10 @@ export default function AdminUsersPage() {
         </div>
       ) : (
         <div className="glass-card overflow-hidden">
-          <div className="grid grid-cols-4 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white/70 border-b border-white/10">
+          <div 
+            className="grid px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white/70 border-b border-white/10"
+            style={{ gridTemplateColumns: '1fr 2fr 1fr 1.5fr' }}
+          >
             <span>Name</span>
             <span>Email</span>
             <span>Role</span>
@@ -84,7 +87,8 @@ export default function AdminUsersPage() {
             {users.map((u) => (
               <div
                 key={u.id}
-                className="grid grid-cols-4 items-center px-6 py-4 text-sm hover:bg-white/5 transition-colors"
+                className="grid items-center px-6 py-4 text-sm hover:bg-white/5 transition-colors"
+                style={{ gridTemplateColumns: '1fr 2fr 1fr 1.5fr' }}
               >
                 <span className="font-medium text-white">{u.name}</span>
                 <span className="text-white/70">{u.email}</span>

@@ -38,14 +38,28 @@ export default function StudentProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
+    
+    // Validation
+    if (!profile.name.trim()) {
+      setMessage("Name is required.");
+      showToast("Name is required", "error");
+      return;
+    }
+    if (!profile.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)) {
+      setMessage("Please enter a valid email address.");
+      showToast("Invalid email address", "error");
+      return;
+    }
+    
     try {
       setSaving(true);
       await put("/api/students/profile", profile);
-      setMessage("Profile updated.");
+      setMessage("Profile updated successfully.");
       showToast("Profile updated", "success");
       refresh();
-    } catch (err) {
-      setMessage("Failed to update profile.");
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.error || "Failed to update profile.";
+      setMessage(errorMsg);
       showToast("Profile update failed", "error");
     } finally {
       setSaving(false);
@@ -53,41 +67,61 @@ export default function StudentProfilePage() {
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-slate-900">Profile</h1>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-white glow-text">Profile</h1>
+        <p className="text-sm text-white/70">Manage your account information</p>
+      </header>
+      
       {loading ? (
-        <div className="h-40 rounded-xl bg-slate-200 animate-pulse" />
+        <div className="glass-card p-8 space-y-4 animate-pulse">
+          <div className="h-4 w-32 bg-white/10 rounded" />
+          <div className="h-12 bg-white/10 rounded" />
+          <div className="h-4 w-32 bg-white/10 rounded" />
+          <div className="h-12 bg-white/10 rounded" />
+        </div>
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+          className="glass-card p-6 space-y-6"
         >
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Name</label>
+            <label className="text-sm font-medium text-white/90">Name</label>
             <input
               value={profile.name}
               onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
+              required
+              minLength={2}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Email</label>
+            <label className="text-sm font-medium text-white/90">Email</label>
             <input
               value={profile.email}
               onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
               type="email"
+              required
             />
           </div>
           {message && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-              {message}
+            <div className={`glass-card px-4 py-3 ${
+              message.includes("successfully") 
+                ? "border-emerald-500/30 bg-emerald-500/10" 
+                : "border-rose-500/30 bg-rose-500/10"
+            }`}>
+              <p className={`text-sm ${
+                message.includes("successfully") ? "text-emerald-300" : "text-rose-300"
+              }`}>
+                {message}
+              </p>
             </div>
           )}
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+            className="glass-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? (
               <span className="inline-flex items-center gap-2">

@@ -47,6 +47,19 @@ export default function TutorProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
+    
+    // Validation
+    if (!profile.name.trim()) {
+      setMessage("Name is required.");
+      showToast("Name is required", "error");
+      return;
+    }
+    if (profile.pricePerHour !== undefined && profile.pricePerHour < 0) {
+      setMessage("Hourly rate must be a positive number.");
+      showToast("Invalid hourly rate", "error");
+      return;
+    }
+    
     try {
       setSaving(true);
       await put("/api/tutor/profile", {
@@ -55,10 +68,11 @@ export default function TutorProfilePage() {
           ? profile.skills.split(",").map((s) => s.trim()).filter(Boolean)
           : [],
       });
-      setMessage("Profile updated.");
+      setMessage("Profile updated successfully.");
       showToast("Profile updated", "success");
-    } catch (err) {
-      setMessage("Failed to update profile.");
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.error || "Failed to update profile.";
+      setMessage(errorMsg);
       showToast("Profile update failed", "error");
     } finally {
       setSaving(false);
@@ -66,64 +80,88 @@ export default function TutorProfilePage() {
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-slate-900">Tutor Profile</h1>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-white glow-text">Tutor Profile</h1>
+        <p className="text-sm text-white/70">Manage your tutor profile information</p>
+      </header>
+      
       {loading ? (
-        <div className="h-44 rounded-xl bg-slate-200 animate-pulse" />
+        <div className="glass-card p-8 space-y-4 animate-pulse">
+          <div className="h-4 w-32 bg-white/10 rounded" />
+          <div className="h-12 bg-white/10 rounded" />
+          <div className="h-4 w-32 bg-white/10 rounded" />
+          <div className="h-24 bg-white/10 rounded" />
+          <div className="h-4 w-32 bg-white/10 rounded" />
+          <div className="h-12 bg-white/10 rounded" />
+        </div>
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+          className="glass-card p-6 space-y-6"
         >
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Name</label>
+            <label className="text-sm font-medium text-white/90">Name</label>
             <input
               value={profile.name}
               onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
+              required
+              minLength={2}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Bio</label>
+            <label className="text-sm font-medium text-white/90">Bio</label>
             <textarea
               value={profile.bio}
               onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
               rows={4}
+              placeholder="Tell students about your teaching experience and expertise..."
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">Hourly Rate ($)</label>
+            <label className="text-sm font-medium text-white/90">Hourly Rate ($)</label>
             <input
               type="number"
               min={0}
+              step="0.01"
               value={profile.pricePerHour ?? ""}
               onChange={(e) =>
-                setProfile({ ...profile, pricePerHour: Number(e.target.value) })
+                setProfile({ ...profile, pricePerHour: e.target.value ? Number(e.target.value) : undefined })
               }
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
+              placeholder="e.g., 45.00"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-800">
+            <label className="text-sm font-medium text-white/90">
               Skills (comma separated)
             </label>
             <input
               value={profile.skills}
               onChange={(e) => setProfile({ ...profile, skills: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-inner outline-none transition focus:border-slate-400 focus:bg-slate-50"
+              className="glass-input w-full"
               placeholder="React, TypeScript, Node.js"
             />
           </div>
           {message && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-              {message}
+            <div className={`glass-card px-4 py-3 ${
+              message.includes("successfully") 
+                ? "border-emerald-500/30 bg-emerald-500/10" 
+                : "border-rose-500/30 bg-rose-500/10"
+            }`}>
+              <p className={`text-sm ${
+                message.includes("successfully") ? "text-emerald-300" : "text-rose-300"
+              }`}>
+                {message}
+              </p>
             </div>
           )}
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+            className="glass-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? (
               <span className="inline-flex items-center gap-2">
