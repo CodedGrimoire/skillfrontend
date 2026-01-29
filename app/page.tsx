@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { get } from "@/src/lib/api";
 import {
   SearchIcon,
   UserIcon,
@@ -13,22 +17,83 @@ import {
   StarIcon,
 } from "@/components/ui/Icons";
 
-const featuredTutors = [
-  { name: "Ava Thompson", subject: "Data Science", rating: "4.9", price: "$45/hr" },
-  { name: "Liam Carter", subject: "Full-Stack JS", rating: "4.8", price: "$40/hr" },
-  { name: "Sofia Patel", subject: "UI/UX Design", rating: "4.7", price: "$38/hr" },
-];
+type Tutor = {
+  id: string;
+  name: string;
+  subject?: string;
+  category?: string;
+  pricePerHour?: number;
+  rating?: number;
+  bio?: string;
+  avatarUrl?: string;
+  tutorProfile?: {
+    hourlyRate?: number;
+    rating?: number;
+    subject?: string;
+    category?: string;
+  };
+};
 
-const categories = [
-  "Web Development",
-  "Data Science",
-  "AI & ML",
-  "UI/UX Design",
-  "Business & Marketing",
-  "Language Learning",
-];
+type Category = {
+  id: string;
+  name: string;
+};
 
 export default function Home() {
+  const [featuredTutors, setFeaturedTutors] = useState<Tutor[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingTutors, setLoadingTutors] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  useEffect(() => {
+    // Fetch featured tutors (top rated)
+    const fetchTutors = async () => {
+      try {
+        const res = await get<{ success?: boolean; tutors?: Tutor[] } | Tutor[]>("/api/tutors?sort=rating_desc");
+        const tutorsArray = Array.isArray(res.data) 
+          ? res.data 
+          : (res.data as any)?.tutors || (res.data as any)?.data || [];
+        
+        // Map to frontend format and take top 3
+        const mappedTutors: Tutor[] = tutorsArray.slice(0, 3).map((tutor: any) => ({
+          id: tutor.id,
+          name: tutor.name,
+          subject: tutor.subject || tutor.tutorProfile?.subject || "",
+          category: tutor.category || tutor.tutorProfile?.category,
+          pricePerHour: tutor.pricePerHour || tutor.tutorProfile?.hourlyRate,
+          rating: tutor.rating || tutor.tutorProfile?.rating,
+          bio: tutor.bio || tutor.tutorProfile?.bio,
+          avatarUrl: tutor.avatarUrl || tutor.tutorProfile?.avatarUrl,
+        }));
+        
+        setFeaturedTutors(mappedTutors);
+      } catch (err) {
+        console.error("Error fetching featured tutors:", err);
+        setFeaturedTutors([]);
+      } finally {
+        setLoadingTutors(false);
+      }
+    };
+
+    // Fetch categories
+    const fetchCategories = async () => {
+      try {
+        const res = await get<{ success?: boolean; categories?: Category[] } | Category[]>("/api/categories");
+        const categoriesArray = Array.isArray(res.data) 
+          ? res.data 
+          : (res.data as any)?.categories || (res.data as any)?.data || [];
+        setCategories(Array.isArray(categoriesArray) ? categoriesArray : []);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchTutors();
+    fetchCategories();
+  }, []);
   return (
     <div className="space-y-16">
       {/* Hero */}
@@ -97,31 +162,53 @@ export default function Home() {
             See all
           </Link>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredTutors.map((tutor) => (
-            <div
-              key={tutor.name}
-              className="glass-card p-5"
-            >
-              <div className="flex items-center justify-between">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-white/20" />
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">
-                  {tutor.rating} <StarIcon className="h-3 w-3 fill-emerald-300" />
-                </span>
+        {loadingTutors ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="glass-card p-5 animate-pulse">
+                <div className="h-12 w-12 rounded-full bg-white/10 mb-4" />
+                <div className="h-4 w-24 bg-white/10 rounded mb-2" />
+                <div className="h-3 w-32 bg-white/10 rounded mb-4" />
+                <div className="h-3 w-20 bg-white/10 rounded" />
               </div>
-              <div className="mt-4 space-y-1">
-                <h3 className="text-lg font-semibold text-white">{tutor.name}</h3>
-                <p className="text-sm text-white/70">{tutor.subject}</p>
-              </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-white/80">
-                <span>{tutor.price}</span>
-                <button className="text-white hover:text-white/80 underline underline-offset-4 transition-colors">
-                  Book
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : featuredTutors.length === 0 ? (
+          <div className="glass-card p-8 text-center">
+            <p className="text-white/60">No featured tutors available.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredTutors.map((tutor) => (
+              <Link
+                key={tutor.id}
+                href={`/tutors/${tutor.id}`}
+                className="glass-card p-5 hover:scale-105 transition-transform cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-white/20 flex items-center justify-center text-white font-semibold">
+                    {tutor.name?.[0]?.toUpperCase() || "T"}
+                  </div>
+                  {tutor.rating && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">
+                      {tutor.rating.toFixed(1)} <StarIcon className="h-3 w-3 fill-emerald-300" />
+                    </span>
+                  )}
+                </div>
+                <div className="mt-4 space-y-1">
+                  <h3 className="text-lg font-semibold text-white">{tutor.name}</h3>
+                  <p className="text-sm text-white/70">{tutor.subject || tutor.category || "Tutor"}</p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-sm text-white/80">
+                  <span>{tutor.pricePerHour ? `$${tutor.pricePerHour}/hr` : "Price on request"}</span>
+                  <span className="text-white hover:text-white/80 underline underline-offset-4 transition-colors">
+                    View Profile
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Categories */}
@@ -129,16 +216,29 @@ export default function Home() {
         <h2 className="text-xl font-semibold text-white">
           Popular Categories
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
-            <div
-              key={category}
-              className="glass-card px-5 py-4 text-sm font-medium text-white text-center"
-            >
-              {category}
-            </div>
-          ))}
-        </div>
+        {loadingCategories ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} className="glass-card px-5 py-4 h-12 animate-pulse bg-white/5" />
+            ))}
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="glass-card px-5 py-4 text-center">
+            <p className="text-white/60">No categories available.</p>
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/tutors?category=${encodeURIComponent(category.name)}`}
+                className="glass-card px-5 py-4 text-sm font-medium text-white text-center hover:scale-105 transition-transform cursor-pointer hover:border-white/30"
+              >
+                {category.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* How It Works */}
