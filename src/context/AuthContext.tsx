@@ -31,6 +31,18 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+// Runtime type guard to validate user payloads from the API
+function isUser(value: unknown): value is User {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<User>;
+  return (
+    typeof candidate.id === "string" &&
+    typeof candidate.name === "string" &&
+    typeof candidate.email === "string" &&
+    (candidate.role === "STUDENT" || candidate.role === "TUTOR" || candidate.role === "ADMIN")
+  );
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -53,19 +65,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("🔍 [AuthContext] /api/auth/me response:", res.data);
       
       // Extract user from response.data.user (API returns { success: true, user: {...} })
-      const userData = res.data.user || res.data;
+      const userData = (res.data as any).user ?? res.data;
       
       // Validate user data structure
-      if (
-        userData &&
-        typeof userData === "object" &&
-        typeof userData.id === "string" &&
-        typeof userData.name === "string" &&
-        typeof userData.email === "string" &&
-        typeof userData.role === "string" &&
-        ["STUDENT", "TUTOR", "ADMIN"].includes(userData.role)
-      ) {
-        setUser(userData as User);
+      if (isUser(userData)) {
+        setUser(userData);
         setToken(tokenValue);
         console.log("🔍 [AuthContext] User set successfully:", userData);
       } else {

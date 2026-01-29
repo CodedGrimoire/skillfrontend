@@ -12,6 +12,13 @@ type AdminStats = {
   bookings: number;
 };
 
+type ApiAdminStats = Partial<AdminStats> & {
+  totalUsers?: number;
+  totalTutors?: number;
+  totalStudents?: number;
+  totalBookings?: number;
+};
+
 export default function AdminOverviewPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -20,9 +27,9 @@ export default function AdminOverviewPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await get<{ success: boolean; stats: AdminStats }>("/api/admin/stats");
+        const res = await get<{ success: boolean; stats: ApiAdminStats }>("/api/admin/stats");
         // Extract stats from response: { success: true, stats: { totalUsers, totalTutors, ... } }
-        const statsData = res.data.stats || res.data;
+        const statsData: ApiAdminStats = res.data.stats || (res.data as any);
         // Map API field names to component field names
         setStats({
           users: statsData.totalUsers ?? statsData.users ?? 0,

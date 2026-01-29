@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse, type AxiosRequestHeaders } from "axios";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 if (typeof window !== "undefined") {
@@ -14,10 +14,9 @@ api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
+      // Preserve existing headers object to satisfy Axios' expected type
+      config.headers = (config.headers ?? {}) as AxiosRequestHeaders;
+      (config.headers as AxiosRequestHeaders)["Authorization"] = `Bearer ${token}`;
       console.log("🔍 [API] Request interceptor: Token attached to", config.url);
     } else {
       console.warn("🔍 [API] Request interceptor: No token found for", config.url);
