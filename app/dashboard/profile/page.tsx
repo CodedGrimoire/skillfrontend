@@ -90,7 +90,7 @@ export default function StudentProfilePage() {
             <input
               value={profile.name}
               onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-              className="glass-input w-full"
+              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400/60"
               required
               minLength={2}
             />
@@ -100,7 +100,7 @@ export default function StudentProfilePage() {
             <input
               value={profile.email}
               onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-              className="glass-input w-full"
+              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400/60"
               type="email"
               required
             />
@@ -121,7 +121,7 @@ export default function StudentProfilePage() {
           <button
             type="submit"
             disabled={saving}
-            className="glass-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 transition disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? (
               <span className="inline-flex items-center gap-2">

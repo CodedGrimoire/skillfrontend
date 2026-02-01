@@ -105,7 +105,7 @@ export default function TutorProfilePage() {
             <input
               value={profile.name}
               onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-              className="glass-input w-full"
+              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
               required
               minLength={2}
             />
@@ -115,7 +115,7 @@ export default function TutorProfilePage() {
             <textarea
               value={profile.bio}
               onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-              className="glass-input w-full"
+              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
               rows={4}
               placeholder="Tell students about your teaching experience and expertise..."
             />
@@ -130,7 +130,7 @@ export default function TutorProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, pricePerHour: e.target.value ? Number(e.target.value) : undefined })
               }
-              className="glass-input w-full"
+              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
               placeholder="e.g., 45.00"
             />
           </div>
@@ -141,7 +141,7 @@ export default function TutorProfilePage() {
             <input
               value={profile.skills}
               onChange={(e) => setProfile({ ...profile, skills: e.target.value })}
-              className="glass-input w-full"
+              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
               placeholder="React, TypeScript, Node.js"
             />
           </div>
@@ -161,7 +161,7 @@ export default function TutorProfilePage() {
           <button
             type="submit"
             disabled={saving}
-            className="glass-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 transition disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? (
               <span className="inline-flex items-center gap-2">
