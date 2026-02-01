@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { get, patch } from "@/src/lib/api";
+import { get, patch, post } from "@/src/lib/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { useToast } from "@/src/context/ToastContext";
 import { Spinner } from "@/components/ui/Spinner";
@@ -66,15 +66,45 @@ export default function TutorDashboardPage() {
   const markCompleted = async (bookingId: string) => {
     try {
       setUpdatingId(bookingId);
-      // Update status on server; backend expected to accept partial update
-      await patch(`/api/bookings/${bookingId}`, { status: "COMPLETED" });
+      // Try primary endpoint; fallback to common alternatives if backend differs
+      const attempts = [
+        () => patch(`/api/bookings/${bookingId}`, { status: "COMPLETED" }),
+        () => post(`/api/bookings/${bookingId}/complete`),
+        () => post(`/api/bookings/complete`, { bookingId }),
+      ];
+
+      let success = false;
+      let lastError: any = null;
+
+      for (const attempt of attempts) {
+        try {
+          await attempt();
+          success = true;
+          break;
+        } catch (err) {
+          lastError = err;
+          const status = err?.response?.status;
+          // 404 means route missing; try next variant
+          if (status && status !== 404) {
+            break;
+          }
+        }
+      }
+
+      if (!success) {
+        throw lastError || new Error("Unable to mark session complete");
+      }
+
       // Optimistically update UI
       setBookings((prev) =>
         prev.map((b) => (b.id === bookingId ? { ...b, status: "COMPLETED" } : b)),
       );
       showToast("Session marked as completed", "success");
     } catch (err: any) {
-      const message = err?.response?.data?.error || "Could not mark as completed.";
+      const message =
+        err?.response?.data?.error ||
+        err?.message ||
+        "Could not mark as completed.";
       showToast(message, "error");
     } finally {
       setUpdatingId(null);
