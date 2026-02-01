@@ -15,6 +15,8 @@ type Booking = {
   sessionName?: string;
   hasReview?: boolean;
   reviewId?: string;
+  reviewRating?: number;
+  reviewComment?: string;
 };
 
 export default function StudentBookingsPage() {
@@ -26,6 +28,7 @@ export default function StudentBookingsPage() {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [viewReview, setViewReview] = useState<{ tutorName: string; rating?: number; comment?: string } | null>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -56,6 +59,8 @@ export default function StudentBookingsPage() {
             !!b.review ||
             !!b.reviews?.length,
           reviewId: b.reviewId || b.review_id || b.review?.id,
+          reviewRating: b.review?.rating || b.reviewRating,
+          reviewComment: b.review?.comment || b.reviewComment,
         }));
 
         setBookings(normalized);
@@ -130,6 +135,20 @@ export default function StudentBookingsPage() {
                       className="glass-btn-secondary px-4 py-2 text-sm"
                     >
                       Leave review
+                    </button>
+                  )}
+                  {b.status === "COMPLETED" && b.hasReview && (
+                    <button
+                      onClick={() =>
+                        setViewReview({
+                          tutorName: b.tutorName,
+                          rating: b.reviewRating,
+                          comment: b.reviewComment,
+                        })
+                      }
+                      className="glass-btn-secondary px-4 py-2 text-sm"
+                    >
+                      My review
                     </button>
                   )}
                 </div>
@@ -230,6 +249,36 @@ export default function StudentBookingsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {viewReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md glass-card p-6">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Your review for {viewReview.tutorName}
+            </h2>
+            <div className="space-y-3 text-white/90">
+              {viewReview.rating !== undefined && (
+                <p className="text-sm">
+                  <span className="font-semibold">Rating:</span> {viewReview.rating} / 5
+                </p>
+              )}
+              {viewReview.comment ? (
+                <p className="text-sm leading-relaxed">{viewReview.comment}</p>
+              ) : (
+                <p className="text-sm text-white/60">No comment left.</p>
+              )}
+            </div>
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setViewReview(null)}
+                className="glass-btn px-4 py-2 text-sm"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
