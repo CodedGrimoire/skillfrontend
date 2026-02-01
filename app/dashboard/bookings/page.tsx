@@ -54,18 +54,37 @@ export default function StudentBookingsPage() {
           ? res.data 
           : (res.data as any)?.bookings || (res.data as any)?.data || [];
 
-        const normalized = (Array.isArray(bookingsArray) ? bookingsArray : []).map((b: any) => ({
-          ...b,
-          tutorName:
-            b.tutorName ||
-            b.tutor?.name ||
-            b.tutor_name ||
-            b.sessionName ||
-            b.title ||
-            b.subject ||
-            "Session",
-          sessionName: b.sessionName || b.title || b.subject,
-        }));
+        const normalized = (Array.isArray(bookingsArray) ? bookingsArray : []).map((b: any) => {
+          // derive date/time if only a dateTime field exists
+          let date = b.date;
+          let time = b.time;
+          const dateTime = b.dateTime || b.datetime || b.date_time || b.startTime || b.start_time;
+          if (!date && dateTime) {
+            const dt = new Date(dateTime);
+            if (!Number.isNaN(dt.getTime())) {
+              date = dt.toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              });
+              time = dt.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+            }
+          }
+          return {
+            ...b,
+            date,
+            time,
+            tutorName:
+              b.tutorName ||
+              b.tutor?.name ||
+              b.tutor_name ||
+              b.sessionName ||
+              b.title ||
+              b.subject ||
+              "Session",
+            sessionName: b.sessionName || b.title || b.subject,
+          };
+        });
 
         // For completed sessions, check if the current student already reviewed the tutor
         const completedTutorIds = Array.from(
