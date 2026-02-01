@@ -12,6 +12,7 @@ type Booking = {
   time: string;
   status: "CONFIRMED" | "COMPLETED" | "CANCELLED";
   tutorId: string;
+  sessionName?: string;
 };
 
 export default function StudentBookingsPage() {
