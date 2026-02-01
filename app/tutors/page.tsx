@@ -17,6 +17,7 @@ type Tutor = {
 };
 
 type Filters = {
+  search: string;
   category: string;
   minPrice: string;
   maxPrice: string;
@@ -24,6 +25,7 @@ type Filters = {
 };
 
 const initialFilters: Filters = {
+  search: "",
   category: "",
   minPrice: "",
   maxPrice: "",
@@ -38,6 +40,7 @@ export default function TutorsPage() {
 
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
+    if (filters.search) params.append("search", filters.search);
     if (filters.category) params.append("category", filters.category);
     if (filters.minPrice) params.append("minPrice", filters.minPrice);
     if (filters.maxPrice) params.append("maxPrice", filters.maxPrice);
@@ -97,6 +100,23 @@ export default function TutorsPage() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const filteredTutors = useMemo(() => {
+    const term = filters.search.trim().toLowerCase();
+    if (!term) return tutors;
+    return tutors.filter((tutor) => {
+      const haystack = [
+        tutor.name,
+        tutor.subject,
+        tutor.category,
+        tutor.bio,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(term);
+    });
+  }, [filters.search, tutors]);
+
   return (
     <div className="space-y-10">
       <header className="space-y-2">
@@ -109,6 +129,16 @@ export default function TutorsPage() {
       {/* Filters */}
       <section className="glass-card">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-2 sm:col-span-2 lg:col-span-4">
+            <label className="text-sm font-medium text-white/90">Search</label>
+            <input
+              type="text"
+              value={filters.search}
+              onChange={(e) => handleFilterChange("search", e.target.value)}
+              placeholder="Search by tutor name, subject, or bio"
+              className="glass-input w-full"
+            />
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Category</label>
             <input
@@ -164,13 +194,13 @@ export default function TutorsPage() {
         <div className="glass-card px-4 py-3 text-sm text-rose-300 border-rose-500/30 bg-rose-500/10">
           {error}
         </div>
-      ) : tutors.length === 0 ? (
+      ) : filteredTutors.length === 0 ? (
         <div className="glass-card px-4 py-6 text-sm text-white/70 text-center">
-          No tutors found. Try adjusting your filters.
+          No tutors found. Try adjusting your search or filters.
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tutors.map((tutor) => (
+          {filteredTutors.map((tutor) => (
             <Link
               key={tutor.id}
               href={`/tutors/${tutor.id}`}

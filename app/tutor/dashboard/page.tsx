@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { get } from "@/src/lib/api";
+import { get, patch } from "@/src/lib/api";
 import { useAuth } from "@/src/context/AuthContext";
+import { useToast } from "@/src/context/ToastContext";
+import { Spinner } from "@/components/ui/Spinner";
 import { ClockIcon, CheckCircleIcon, StarIcon, DollarSignIcon, GraduationCapIcon, CalendarIcon } from "@/components/ui/Icons";
 
 type TutorProfile = {
@@ -29,6 +31,8 @@ export default function TutorDashboardPage() {
   const [profile, setProfile] = useState<TutorProfile | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,6 +62,24 @@ export default function TutorDashboardPage() {
     };
     fetchData();
   }, []);
+
+  const markCompleted = async (bookingId: string) => {
+    try {
+      setUpdatingId(bookingId);
+      // Update status on server; backend expected to accept partial update
+      await patch(`/api/bookings/${bookingId}`, { status: "COMPLETED" });
+      // Optimistically update UI
+      setBookings((prev) =>
+        prev.map((b) => (b.id === bookingId ? { ...b, status: "COMPLETED" } : b)),
+      );
+      showToast("Session marked as completed", "success");
+    } catch (err: any) {
+      const message = err?.response?.data?.error || "Could not mark as completed.";
+      showToast(message, "error");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   // Calculate stats from bookings
   const upcoming = bookings.filter((b) => b.status === "CONFIRMED").length;
@@ -173,6 +195,9 @@ export default function TutorDashboardPage() {
       <section className="glass-card">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white">Recent Sessions</h2>
+          <p className="text-xs text-white/60">
+            Mark sessions as completed to unlock student reviews.
+          </p>
         </div>
         {loading ? (
           <div className="space-y-3">
@@ -202,9 +227,27 @@ export default function TutorDashboardPage() {
                       <span>{booking.date} {booking.time ? `• ${booking.time}` : ""}</span>
                     </div>
                   </div>
-                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-white/10 text-white border border-white/20">
-                    {booking.status}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-white/10 text-white border border-white/20">
+                      {booking.status}
+                    </span>
+                    {booking.status !== "COMPLETED" && booking.status !== "CANCELLED" && (
+                      <button
+                        onClick={() => markCompleted(booking.id)}
+                        disabled={!!updatingId}
+                        className="glass-btn-secondary px-3 py-1 text-xs disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {updatingId === booking.id ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Spinner size={12} />
+                            Saving...
+                          </span>
+                        ) : (
+                          "Mark completed"
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
