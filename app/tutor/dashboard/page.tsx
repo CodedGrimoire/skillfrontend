@@ -46,7 +46,12 @@ export default function TutorDashboardPage() {
         const bookingsArray = Array.isArray(bookingsRes.data) 
           ? bookingsRes.data 
           : (bookingsRes.data as any)?.bookings || (bookingsRes.data as any)?.data || [];
-        setBookings(Array.isArray(bookingsArray) ? bookingsArray : []);
+        const normalized = (Array.isArray(bookingsArray) ? bookingsArray : []).map((b: any) => ({
+          ...b,
+          studentName: b.studentName || b.student?.name || b.student_name,
+          studentId: b.studentId || b.student_id || b.student?.id,
+        }));
+        setBookings(normalized);
         
         // Extract profile from response (handle both wrapped and unwrapped)
         const profileData = profileRes.data 
