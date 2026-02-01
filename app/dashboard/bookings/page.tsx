@@ -34,7 +34,21 @@ export default function StudentBookingsPage() {
         const bookingsArray = Array.isArray(res.data) 
           ? res.data 
           : (res.data as any)?.bookings || (res.data as any)?.data || [];
-        setBookings(Array.isArray(bookingsArray) ? bookingsArray : []);
+
+        const normalized = (Array.isArray(bookingsArray) ? bookingsArray : []).map((b: any) => ({
+          ...b,
+          tutorName:
+            b.tutorName ||
+            b.tutor?.name ||
+            b.tutor_name ||
+            b.sessionName ||
+            b.title ||
+            b.subject ||
+            "Session",
+          sessionName: b.sessionName || b.title || b.subject,
+        }));
+
+        setBookings(normalized);
       } catch (err) {
         setError("Unable to load bookings.");
         setBookings([]);
@@ -75,7 +89,9 @@ export default function StudentBookingsPage() {
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-lg font-semibold text-white mb-1">{b.tutorName}</p>
+                  <p className="text-lg font-semibold text-white mb-1">
+                    {b.sessionName || b.tutorName}
+                  </p>
                   <p className="text-sm text-white/70">
                     {b.date} • {b.time}
                   </p>
