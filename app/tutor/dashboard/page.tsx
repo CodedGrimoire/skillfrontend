@@ -75,6 +75,7 @@ export default function TutorDashboardPage() {
 
       let success = false;
       let lastError: any = null;
+      let saw404 = false;
 
       for (const attempt of attempts) {
         try {
@@ -88,7 +89,14 @@ export default function TutorDashboardPage() {
           if (status && status !== 404) {
             break;
           }
+          if (status === 404) saw404 = true;
         }
+      }
+
+      // If every attempt 404s, proceed with optimistic completion to keep flow usable
+      if (!success && saw404) {
+        success = true;
+        showToast("Endpoint missing; marking completed locally.", "info");
       }
 
       if (!success) {
