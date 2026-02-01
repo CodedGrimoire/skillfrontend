@@ -213,10 +213,6 @@ export function NavLinks() {
                   <div className={`text-sm px-3 py-1.5 rounded-full border font-semibold inline-block ${getRoleBadgeColor(user.role)}`}>
                     {user.role || "N/A"}
                   </div>
-                  {/* Debug info */}
-                  <div className="text-xs text-white/40 mt-1 font-mono">
-                    Role: {JSON.stringify(user.role)}
-                  </div>
                 </div>
               </div>
               <div className="p-2 space-y-1">
