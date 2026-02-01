@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { get, post } from "@/src/lib/api";
+import api, { get, post, patch } from "@/src/lib/api";
 import { useToast } from "@/src/context/ToastContext";
 import { Spinner } from "@/components/ui/Spinner";
 
@@ -17,6 +17,7 @@ type Booking = {
   reviewId?: string;
   reviewRating?: number;
   reviewComment?: string;
+  reviewTutorId?: string;
 };
 
 export default function StudentBookingsPage() {
@@ -28,7 +29,19 @@ export default function StudentBookingsPage() {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [viewReview, setViewReview] = useState<{ tutorName: string; rating?: number; comment?: string } | null>(null);
+  const [viewReview, setViewReview] = useState<{
+    tutorName: string;
+    rating?: number;
+    comment?: string;
+    reviewId?: string;
+    tutorId?: string;
+  } | null>(null);
+  const [editReview, setEditReview] = useState<{
+    reviewId: string;
+    tutorName: string;
+    rating: number;
+    comment: string;
+  } | null>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -95,6 +108,7 @@ export default function StudentBookingsPage() {
                 reviewId: r.reviewId,
                 reviewRating: r.reviewRating,
                 reviewComment: r.reviewComment,
+                reviewTutorId: b.tutorId,
               }
             : b;
         });
@@ -143,9 +157,9 @@ export default function StudentBookingsPage() {
                       <p className="text-lg font-semibold text-white mb-1">
                         {b.sessionName || b.tutorName}
                       </p>
-                      <p className="text-sm text-white/70">
-                        {b.date} • {b.time}
-                      </p>
+                  <p className="text-sm text-white/70">
+                    {b.date} {b.time ? `• ${b.time}` : ""}
+                  </p>
                       {b.hasReview && (
                         <p className="text-xs text-emerald-300 mt-1">Review submitted</p>
                       )}
@@ -180,6 +194,8 @@ export default function StudentBookingsPage() {
                           tutorName: b.tutorName,
                           rating: b.reviewRating,
                           comment: b.reviewComment,
+                          reviewId: b.reviewId,
+                          tutorId: b.reviewTutorId,
                         })
                       }
                       className="glass-btn-secondary px-4 py-2 text-sm"
@@ -269,11 +285,11 @@ export default function StudentBookingsPage() {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="glass-btn px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
-                >
+              <button
+                type="submit"
+                disabled={submitting}
+                className="glass-btn px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+              >
                   {submitting ? (
                     <span className="inline-flex items-center gap-2">
                       <Spinner size={14} />
@@ -307,7 +323,40 @@ export default function StudentBookingsPage() {
                 <p className="text-sm text-white/60">No comment left.</p>
               )}
             </div>
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end gap-3 mt-6">
+              {viewReview.reviewId && (
+                <>
+                  <button
+                    onClick={() =>
+                      setEditReview({
+                        reviewId: viewReview.reviewId!,
+                        tutorName: viewReview.tutorName,
+                        rating: viewReview.rating ?? 5,
+                        comment: viewReview.comment ?? "",
+                      })
+                    }
+                    className="glass-btn-secondary px-4 py-2 text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await api.delete(`/api/reviews/${viewReview.reviewId}`);
+                        showToast("Review deleted", "success");
+                        setViewReview(null);
+                        window.location.reload();
+                      } catch (err: any) {
+                        const msg = err?.response?.data?.error || "Failed to delete review";
+                        showToast(msg, "error");
+                      }
+                    }}
+                    className="glass-btn-secondary px-4 py-2 text-sm text-rose-200 hover:text-rose-100"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => setViewReview(null)}
                 className="glass-btn px-4 py-2 text-sm"
@@ -315,6 +364,100 @@ export default function StudentBookingsPage() {
                 Close
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {editReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md glass-card p-6">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Edit your review for {editReview.tutorName}
+            </h2>
+            <form
+              className="space-y-4"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setSubmitError(null);
+                
+                if (editReview.rating < 1 || editReview.rating > 5) {
+                  setSubmitError("Please select a valid rating.");
+                  return;
+                }
+                
+                try {
+                  setSubmitting(true);
+                  await patch(`/api/reviews/${editReview.reviewId}`, {
+                    rating: editReview.rating,
+                    comment: editReview.comment.trim() || undefined,
+                  });
+                  showToast("Review updated", "success");
+                  setEditReview(null);
+                  setViewReview(null);
+                  window.location.reload();
+                } catch (err: any) {
+                  const errorMsg = err?.response?.data?.error || "Failed to update review.";
+                  setSubmitError(errorMsg);
+                  showToast("Review update failed", "error");
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white/90">Rating</label>
+                <select
+                  value={editReview.rating}
+                  onChange={(e) => setEditReview({ ...editReview, rating: Number(e.target.value) })}
+                  className="glass-input w-full"
+                  required
+                >
+                  {[5, 4, 3, 2, 1].map((r) => (
+                    <option key={r} value={r}>
+                      {r} {r === 1 ? 'Star' : 'Stars'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white/90">Comment (optional)</label>
+                <textarea
+                  value={editReview.comment}
+                  onChange={(e) => setEditReview({ ...editReview, comment: e.target.value })}
+                  rows={4}
+                  className="glass-input w-full"
+                  placeholder="Update your feedback..."
+                />
+              </div>
+              {submitError && (
+                <div className="glass-card px-4 py-3 border-rose-500/30 bg-rose-500/10">
+                  <p className="text-sm text-rose-300">{submitError}</p>
+                </div>
+              )}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditReview(null)}
+                  className="glass-btn-secondary px-4 py-2 text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="glass-btn px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {submitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <Spinner size={14} />
+                      Saving...
+                    </span>
+                  ) : (
+                    "Save changes"
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
