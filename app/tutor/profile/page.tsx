@@ -87,7 +87,7 @@ export default function TutorProfilePage() {
       </header>
       
       {loading ? (
-        <div className="glass-card p-8 space-y-4 animate-pulse">
+        <div className="rounded-2xl border border-white/10 bg-[#0c1027] p-8 space-y-4 animate-pulse">
           <div className="h-4 w-32 bg-white/10 rounded" />
           <div className="h-12 bg-white/10 rounded" />
           <div className="h-4 w-32 bg-white/10 rounded" />
@@ -98,7 +98,7 @@ export default function TutorProfilePage() {
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="glass-card p-6 space-y-6"
+          className="rounded-2xl border border-white/10 bg-[#0c1027] p-6 space-y-6"
         >
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Name</label>

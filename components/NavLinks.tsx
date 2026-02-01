@@ -179,7 +179,7 @@ export function NavLinks() {
       <div className="relative">
         <button
           onClick={() => setShowProfileMenu(!showProfileMenu)}
-          className="flex items-center gap-2 glass px-3 py-2 rounded-full hover:bg-white/10 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-full border border-white/15 bg-[#0c1027] hover:bg-[#141a3a] transition-colors"
         >
           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-white/20 flex items-center justify-center text-white font-semibold text-sm">
             {((user.name || user.email || "U")[0] || "U").toUpperCase()}
@@ -200,7 +200,7 @@ export function NavLinks() {
               className="fixed inset-0 z-40"
               onClick={() => setShowProfileMenu(false)}
             />
-            <div className="absolute right-0 top-full mt-2 w-56 glass-card z-50">
+            <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-white/12 bg-[#0c1027] shadow-xl z-50">
               <div className="p-4 border-b border-white/10">
                 <div className="text-sm font-semibold text-white">
                   {user.name || user.email || "User"}
@@ -223,13 +223,13 @@ export function NavLinks() {
                 <Link
                   href={redirectForRole(user.role)}
                   onClick={() => setShowProfileMenu(false)}
-                  className="block w-full text-left glass-btn-secondary px-4 py-2 text-sm"
+                  className="block w-full text-left px-4 py-2 text-sm rounded-lg bg-white/5 hover:bg-white/10 text-white transition"
                 >
                   Dashboard
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left glass-btn-secondary px-4 py-2 text-sm text-rose-300 hover:text-rose-200 hover:bg-rose-500/10"
+                  className="block w-full text-left px-4 py-2 text-sm rounded-lg bg-white/5 hover:bg-rose-500/15 text-rose-200 transition"
                 >
                   Logout
                 </button>
