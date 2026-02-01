@@ -13,6 +13,8 @@ type Booking = {
   status: "CONFIRMED" | "COMPLETED" | "CANCELLED";
   tutorId: string;
   sessionName?: string;
+  hasReview?: boolean;
+  reviewId?: string;
 };
 
 export default function StudentBookingsPage() {
@@ -47,6 +49,13 @@ export default function StudentBookingsPage() {
             b.subject ||
             "Session",
           sessionName: b.sessionName || b.title || b.subject,
+          hasReview:
+            b.hasReview ||
+            !!b.reviewId ||
+            !!b.review_id ||
+            !!b.review ||
+            !!b.reviews?.length,
+          reviewId: b.reviewId || b.review_id || b.review?.id,
         }));
 
         setBookings(normalized);
@@ -86,17 +95,20 @@ export default function StudentBookingsPage() {
           {bookings.map((b) => (
             <div
               key={b.id}
-              className="glass-card p-6 hover:scale-[1.02] transition-transform"
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-lg font-semibold text-white mb-1">
-                    {b.sessionName || b.tutorName}
-                  </p>
-                  <p className="text-sm text-white/70">
-                    {b.date} • {b.time}
-                  </p>
-                </div>
+                  className="glass-card p-6 hover:scale-[1.02] transition-transform"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-lg font-semibold text-white mb-1">
+                        {b.sessionName || b.tutorName}
+                      </p>
+                      <p className="text-sm text-white/70">
+                        {b.date} • {b.time}
+                      </p>
+                      {b.hasReview && (
+                        <p className="text-xs text-emerald-300 mt-1">Review submitted</p>
+                      )}
+                    </div>
                 <div className="flex items-center gap-3">
                   <span className={`rounded-full px-3 py-1 text-xs font-semibold border ${
                     b.status === "COMPLETED"
@@ -107,7 +119,7 @@ export default function StudentBookingsPage() {
                   }`}>
                     {b.status}
                   </span>
-                  {b.status === "COMPLETED" && (
+                  {b.status === "COMPLETED" && !b.hasReview && (
                     <button
                       onClick={() => {
                         setModalBooking(b);
