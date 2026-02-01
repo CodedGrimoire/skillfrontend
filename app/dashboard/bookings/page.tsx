@@ -52,18 +52,54 @@ export default function StudentBookingsPage() {
             b.subject ||
             "Session",
           sessionName: b.sessionName || b.title || b.subject,
-          hasReview:
-            b.hasReview ||
-            !!b.reviewId ||
-            !!b.review_id ||
-            !!b.review ||
-            !!b.reviews?.length,
-          reviewId: b.reviewId || b.review_id || b.review?.id,
-          reviewRating: b.review?.rating || b.reviewRating,
-          reviewComment: b.review?.comment || b.reviewComment,
         }));
 
-        setBookings(normalized);
+        // For completed sessions, check if the current student already reviewed the tutor
+        const completedTutorIds = Array.from(
+          new Set(
+            normalized
+              .filter((b) => b.status === "COMPLETED" && b.tutorId)
+              .map((b) => b.tutorId),
+          ),
+        );
+
+        const reviewMap = new Map<
+          string,
+          { hasReview: boolean; reviewId?: string; reviewRating?: number; reviewComment?: string }
+        >();
+
+        await Promise.all(
+          completedTutorIds.map(async (tutorId) => {
+            try {
+              const res = await get<{ success: boolean; hasReviewed: boolean; review?: any }>(
+                `/api/reviews/check/${tutorId}`,
+              );
+              reviewMap.set(tutorId, {
+                hasReview: !!res.data.hasReviewed,
+                reviewId: res.data.review?.id,
+                reviewRating: res.data.review?.rating,
+                reviewComment: res.data.review?.comment,
+              });
+            } catch {
+              reviewMap.set(tutorId, { hasReview: false });
+            }
+          }),
+        );
+
+        const withReviews = normalized.map((b) => {
+          const r = b.tutorId ? reviewMap.get(b.tutorId) : undefined;
+          return r
+            ? {
+                ...b,
+                hasReview: r.hasReview,
+                reviewId: r.reviewId,
+                reviewRating: r.reviewRating,
+                reviewComment: r.reviewComment,
+              }
+            : b;
+        });
+
+        setBookings(withReviews);
       } catch (err) {
         setError("Unable to load bookings.");
         setBookings([]);
