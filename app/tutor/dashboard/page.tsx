@@ -81,9 +81,9 @@ export default function TutorDashboardPage() {
           await attempt();
           success = true;
           break;
-        } catch (err) {
+        } catch (err: any) {
           lastError = err;
-          const status = err?.response?.status;
+          const status = err?.response?.status as number | undefined;
           // 404 means route missing; try next variant
           if (status && status !== 404) {
             break;
