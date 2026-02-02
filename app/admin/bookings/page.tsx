@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+
+
 import { get } from "@/src/lib/api";
 
 type AdminBooking = {
@@ -12,20 +15,33 @@ type AdminBooking = {
   status: string;
 };
 
-export default function AdminBookingsPage() {
+export default function AdminBookingsPage() 
+
+
+{
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchBookings = async () => 
+      
+      {
       setError(null);
       try {
         const res = await get<{ success: boolean; bookings: AdminBooking[] }>("/api/admin/bookings");
         // Extract bookings array from response: { success: true, bookings: [...] }
         const bookingsArray = res.data.bookings || res.data || [];
         setBookings(Array.isArray(bookingsArray) ? bookingsArray : []);
-      } catch (err) {
+      }
+      
+      
+      catch (err) 
+      
+      
+      
+      
+      {
         setError("Unable to load bookings.");
         setBookings([]);
       } finally {
@@ -49,7 +65,8 @@ export default function AdminBookingsPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="glass-card px-6 py-4 border-rose-500/30 bg-rose-500/10">
+        <div 
+        className="glass-card px-6 py-4 border-rose-500/30 bg-rose-500/10">
           <p className="text-sm text-rose-300">{error}</p>
         </div>
       ) : bookings.length === 0 ? (
@@ -61,7 +78,12 @@ export default function AdminBookingsPage() {
           <div className="grid grid-cols-5 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white/70 border-b border-white/10">
             <span>Student</span>
             <span>Tutor</span>
+
+
+
             <span>Date</span>
+
+
             <span>Status</span>
             <span>Time</span>
           </div>
@@ -71,13 +93,25 @@ export default function AdminBookingsPage() {
                 key={b.id}
                 className="grid grid-cols-5 items-center px-6 py-4 text-sm hover:bg-white/5 transition-colors"
               >
-                <span className="font-medium text-white">{b.studentName}</span>
-                <span className="text-white/80">{b.tutorName}</span>
+                <span className="font-medium text-white">
+                  
+                  
+                  {b.studentName}</span>
+                <span className="text-white/80">{b.tutorName}
+                
+                
+                </span>
                 <span className="text-white/70">{b.date}</span>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white border border-white/20">
                   {b.status}
+
+
                 </span>
-                <span className="text-white/70">{b.time}</span>
+                <span className="text-white/70">
+                {b.time}
+                
+                
+                </span>
               </div>
             ))}
           </div>

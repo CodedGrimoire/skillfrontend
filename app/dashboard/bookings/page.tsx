@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import api, { get, post, patch } from "@/src/lib/api";
+
+
+
+
 import { useToast } from "@/src/context/ToastContext";
+
+
+
+
 import { Spinner } from "@/components/ui/Spinner";
 
 type Booking = {
@@ -22,13 +30,27 @@ type Booking = {
 
 export default function StudentBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+
+
+
+const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
+
+
   const [modalBooking, setModalBooking] = useState<Booking | null>(null);
-  const [rating, setRating] = useState<number>(5);
+ const [rating, setRating] = useState<number>(5);
   const [comment, setComment] = useState("");
+
+
+
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+
+
+
   const [viewReview, setViewReview] = useState<{
     tutorName: string;
     rating?: number;
@@ -133,10 +155,25 @@ export default function StudentBookingsPage() {
         });
 
         setBookings(withReviews);
-      } catch (err) {
+      } 
+      
+      
+      
+      
+      catch (err) {
         setError("Unable to load bookings.");
         setBookings([]);
-      } finally {
+      } 
+      
+      
+      
+      
+      finally 
+      
+      
+      
+      
+      {
         setLoading(false);
       }
     };
@@ -146,8 +183,20 @@ export default function StudentBookingsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-white glow-text">My Bookings</h1>
-        <p className="text-sm text-white/70">View and manage your tutoring sessions</p>
+        <h1 className="text-3xl font-bold text-white glow-text">
+          
+          My Bookings
+          
+          
+          </h1>
+        <p className="text-sm text-white/70">
+        
+        
+        View and manage your tutoring sessions
+        
+        
+        
+        </p>
       </header>
       
       {loading ? (
@@ -162,7 +211,14 @@ export default function StudentBookingsPage() {
         </div>
       ) : bookings.length === 0 ? (
         <div className="glass-card px-6 py-12 text-center">
-          <p className="text-sm text-white/60">No bookings yet. Book a tutor to get started.</p>
+          <p className="text-sm text-white/60">
+          
+          
+          No bookings yet. Book a tutor to get started.
+          
+          
+          
+          </p>
         </div>
       ) : (
         <div className="space-y-3">

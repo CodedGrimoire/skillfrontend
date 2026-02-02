@@ -37,9 +37,20 @@ export default function AdminOverviewPage() {
           students: statsData.totalStudents ?? statsData.students ?? 0,
           bookings: statsData.totalBookings ?? statsData.bookings ?? 0,
         });
-      } catch (err) {
+      } 
+      
+      
+      catch (err) 
+      
+      
+      
+      
+      {
         setStats({ users: 0, tutors: 0, students: 0, bookings: 0 });
-      } finally {
+      } 
+      
+      
+      finally {
         setLoading(false);
       }
     };
@@ -87,7 +98,15 @@ export default function AdminOverviewPage() {
         <h1 className="text-3xl font-bold text-white glow-text">
           Welcome, {user?.name ?? "Admin"}
         </h1>
-        <p className="text-sm text-white/70">Platform overview and health.</p>
+        <p className="text-sm text-white/70">
+        
+        
+        Platform overview and health.
+        
+        
+        
+        
+        </p>
       </header>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -100,6 +119,9 @@ export default function AdminOverviewPage() {
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-50 group-hover:opacity-70 transition-opacity`} />
               <div className="relative z-10">
+
+
+
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-xl bg-gradient-to-br ${card.color} border border-white/10`}>
                     <Icon className={`h-6 w-6 ${card.iconColor}`} />
@@ -108,14 +130,23 @@ export default function AdminOverviewPage() {
                 <p className="text-sm font-medium text-white/70 uppercase tracking-wide mb-2">
                   {card.label}
                 </p>
+
+
+
                 <p className={`text-4xl font-bold ${card.valueColor} transition-all`}>
                   {loading ? (
                     <span className="inline-block animate-pulse">—</span>
                   ) : (
                     card.value
                   )}
+
+
+
                 </p>
               </div>
+
+
+              
             </div>
           );
         })}

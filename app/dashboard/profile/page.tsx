@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+
+
 import { get, put } from "@/src/lib/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { useToast } from "@/src/context/ToastContext";
+
+
+
 import { Spinner } from "@/components/ui/Spinner";
 
 type Profile = {
@@ -13,8 +19,15 @@ type Profile = {
 
 export default function StudentProfilePage() {
   const { user, refresh } = useAuth();
+
+
+
+
   const { showToast } = useToast();
   const [profile, setProfile] = useState<Profile>({ name: "", email: "" });
+
+
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -24,11 +37,21 @@ export default function StudentProfilePage() {
       try {
         const res = await get<Profile>("/api/students/profile");
         setProfile(res.data);
-      } catch (err) {
+      } 
+      
+      
+      
+      
+      catch (err) {
         if (user) {
           setProfile({ name: user.name, email: user.email });
         }
-      } finally {
+      } 
+      
+      
+      
+      
+      finally {
         setLoading(false);
       }
     };
@@ -57,11 +80,22 @@ export default function StudentProfilePage() {
       setMessage("Profile updated successfully.");
       showToast("Profile updated", "success");
       refresh();
-    } catch (err: any) {
+    }
+    
+    
+    
+    catch (err: any) {
       const errorMsg = err?.response?.data?.error || "Failed to update profile.";
       setMessage(errorMsg);
       showToast("Profile update failed", "error");
-    } finally {
+    } 
+    
+    
+    
+    
+    
+    
+    finally {
       setSaving(false);
     }
   };
@@ -69,8 +103,25 @@ export default function StudentProfilePage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-white glow-text">Profile</h1>
-        <p className="text-sm text-white/70">Manage your account information</p>
+        <h1 className="text-3xl font-bold text-white glow-text">
+          
+          
+          Profile
+          
+          
+          </h1>
+        <p className="text-sm text-white/70">
+        
+        
+        Manage your account information
+        
+        
+        
+        
+        
+        
+        
+        </p>
       </header>
       
       {loading ? (
@@ -96,7 +147,16 @@ export default function StudentProfilePage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Email</label>
+
+
+
+            <label className="text-sm font-medium text-white/90">
+            
+            
+            Email
+            
+            
+            </label>
             <input
               value={profile.email}
               onChange={(e) => setProfile({ ...profile, email: e.target.value })}

@@ -17,10 +17,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AuthGate mode="protected" allowedRoles={["ADMIN"]}>
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 min-h-screen">
-        {/* Sidebar */}
+       
         <aside className="glass-card w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-6 h-fit">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-white mb-2 glow-text">Admin Console</h2>
+            <h2 className="text-xl font-bold text-white mb-2 glow-text">
+              
+              Admin Console
+              
+              </h2>
             <div className="h-0.5 w-16 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 rounded-full" />
           </div>
           <nav className="space-y-2">
@@ -46,7 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
         </aside>
         
-        {/* Main Content Area */}
+       
         <section className="flex-1 min-w-0 w-full">
           {children}
         </section>

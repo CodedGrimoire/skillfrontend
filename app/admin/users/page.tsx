@@ -15,8 +15,14 @@ type User = {
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+
+
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
+
   const [actionId, setActionId] = useState<string | null>(null);
   const { showToast } = useToast();
 
@@ -27,10 +33,21 @@ export default function AdminUsersPage() {
       // Extract users array from response: { success: true, users: [...] }
       const usersArray = res.data.users || res.data || [];
       setUsers(Array.isArray(usersArray) ? usersArray : []);
-    } catch (err) {
+    }
+    
+    
+    catch (err) 
+    
+    
+    {
       setError("Unable to load users.");
       setUsers([]);
-    } finally {
+    } 
+    
+    finally
+    
+    
+    {
       setLoading(false);
     }
   };
@@ -58,8 +75,19 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-white glow-text">Users</h1>
-        <p className="text-sm text-white/70">Manage all platform users</p>
+        <h1 className="text-3xl font-bold text-white glow-text">
+          
+          Users
+          
+          
+          </h1>
+        <p className="text-sm text-white/70">
+        
+        
+        Manage all platform users
+        
+        
+        </p>
       </header>
       
       {loading ? (
@@ -78,7 +106,12 @@ export default function AdminUsersPage() {
             className="grid px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white/70 border-b border-white/10"
             style={{ gridTemplateColumns: '1fr 2fr 1fr 1.5fr' }}
           >
-            <span>Name</span>
+            <span>
+              
+              Name</span>
+
+
+
             <span>Email</span>
             <span>Role</span>
             <span>Status</span>
@@ -91,6 +124,9 @@ export default function AdminUsersPage() {
                 style={{ gridTemplateColumns: '1fr 2fr 1fr 1.5fr' }}
               >
                 <span className="font-medium text-white">{u.name}</span>
+
+
+
                 <span className="text-white/70">{u.email}</span>
                 <span className="text-white/80">{u.role}</span>
                 <div className="flex items-center gap-3">
@@ -119,9 +155,12 @@ export default function AdminUsersPage() {
                       )}
                     </button>
                   )}
+
                 </div>
               </div>
             ))}
+
+
           </div>
         </div>
       )}

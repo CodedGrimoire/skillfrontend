@@ -3,13 +3,23 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+
+
+
 import { useAuth } from "@/src/context/AuthContext";
+
+
+
 import { redirectForRole } from "@/src/lib/auth";
 
 export function NavLinks() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, loading, token, authLoading } = useAuth();
+
+
+
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   // Debug: Log auth state changes
@@ -52,9 +62,8 @@ export function NavLinks() {
   // Debug: Print role when dropdown opens
   useEffect(() => {
     if (showProfileMenu && user) {
-      console.log("🔍 User Role:", user.role);
-      console.log("🔍 Full User Object:", user);
-      console.log("🔍 Role Type:", typeof user.role);
+      console.log("User Role:", user.role);
+     
     }
   }, [showProfileMenu, user]);
 
