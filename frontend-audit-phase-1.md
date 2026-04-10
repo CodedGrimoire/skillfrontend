@@ -38,6 +38,13 @@
 - `app/(public)/privacy/page.tsx`
 - `app/(public)/terms/page.tsx`
 
+## Homepage upgrade (Prompt 2)
+- Rebuilt `app/page.tsx` into modular sections (Hero, Stats, Featured Tutors, Categories, How It Works, Benefits, Formats, Testimonials, Dual CTA, FAQ, Resources, Newsletter).
+- Added home-specific components under `components/home/*` with shared layout primitives and loading/empty states.
+- Hero now interactive with rotating spotlight, search cue, dual CTAs, and quick links.
+- Featured tutors and categories use LoadingGrid/EmptyState and preserve backend fetch paths.
+- All CTAs routed to existing pages (`/tutors`, `/register`, resource/help pages).
+
 ## Unresolved frontend issues
 - Tutor profile (`/tutors/[id]`) page is still missing; navbar links to tutor profiles rely on that route.
 - Dashboard subroutes beyond the provided pages remain to be fleshed out (e.g., bookings, profile detail pages) for full navigation depth.
