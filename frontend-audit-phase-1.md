@@ -52,3 +52,10 @@
 
 ## Backend dependencies logged
 - None required for the UI improvements in this phase.
+
+## Tutors explore page (Prompt 3)
+- Rebuilt `/tutors` into a full explore page with search bar, filters (category, price range, rating, mode), sorting, and client pagination.
+- Added responsive filters (sticky sidebar on desktop, collapsible on mobile) with clear/reset actions and active count.
+- Consistent tutor cards with avatar, headline, subject/category, rating, price, mode, location, and CTA.
+- Loading uses `LoadingGrid`; empty/error states show contextual messaging; pagination shows counts.
+- Backend need logged in `backend.md` for server-side pagination and richer filters/sort support.
