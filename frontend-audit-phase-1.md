@@ -59,3 +59,10 @@
 - Consistent tutor cards with avatar, headline, subject/category, rating, price, mode, location, and CTA.
 - Loading uses `LoadingGrid`; empty/error states show contextual messaging; pagination shows counts.
 - Backend need logged in `backend.md` for server-side pagination and richer filters/sort support.
+
+## Tutor detail page (Prompt 4)
+- Built `/tutors/[id]` with modular sections: hero/profile header, overview, key info, reviews, related tutors.
+- Actions: Book session (login redirect), Message (contact page), Browse (tutors list); all routes valid.
+- States: loading skeleton grid, not-found/empty states for tutor and reviews, related tutors loading/empty.
+- Related tutors fetched by category with graceful fallback.
+- Logged backend needs for richer tutor detail (reviews, badges, media, related endpoint) in `backend.md`.

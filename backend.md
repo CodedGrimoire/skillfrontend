@@ -14,3 +14,20 @@
 }
 ```
 - Priority: High (for scalability and accurate counts).
+2. Tutor detail data (reviews, badges, richer profile fields)
+- Why: Detail page needs review list, headline, badges, mode/location, and related tutors without client fallbacks.
+- Suggested endpoints: `GET /api/tutors/:id` should return {id,name,subject,category,hourlyRate,rating,reviewCount,bio,headline,badges[],mode,location,reviews: [{id,reviewer,rating,comment,date}], media: []}. Optional: `GET /api/tutors/:id/related` for similar tutors.
+- Example request: `/api/tutors/abc123`
+- Example response:
+```
+{
+  "id":"abc123","name":"Aisha Rahman","subject":"Front-end","category":"Web Development","hourlyRate":65,"rating":4.9,"reviewCount":18,
+  "bio":"Senior engineer mentoring React and system design.",
+  "headline":"Senior FE @Scale",
+  "badges":["Top rated","Online"],
+  "mode":"Online","location":"UTC+1",
+  "reviews":[{"id":"r1","reviewer":"Sara","rating":5,"comment":"Clear code reviews","date":"2026-03-01"}],
+  "media": []
+}
+```
+- Priority: Medium (unlocks richer, accurate detail rendering and review section).
