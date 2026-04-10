@@ -18,6 +18,7 @@ export default function TutorAvailabilityPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -41,8 +42,10 @@ export default function TutorAvailabilityPage() {
         }
         
         setAvailability(availabilityData);
+        setError(null);
       } catch (err) {
         setAvailability([]);
+        setError("Unable to load availability right now.");
       } finally {
         setLoading(false);
       }
@@ -91,6 +94,7 @@ export default function TutorAvailabilityPage() {
 
   const saveAvailability = async () => {
     setMessage(null);
+    setError(null);
     try {
       setSaving(true);
       // API expects availability as JSON string
@@ -112,7 +116,7 @@ export default function TutorAvailabilityPage() {
         <h1 className="text-3xl font-bold text-white glow-text">Availability</h1>
         <p className="text-sm text-white/70">Set your available time slots for tutoring sessions</p>
       </header>
-      
+
       {loading ? (
         <div className="glass-card p-8 space-y-4 animate-pulse">
           <div className="h-12 bg-white/10 rounded" />
@@ -121,6 +125,12 @@ export default function TutorAvailabilityPage() {
         </div>
       ) : (
         <div className="glass-card p-6 space-y-6">
+          {error && (
+            <div className="glass-card px-4 py-3 text-sm text-rose-300 border-rose-500/30 bg-rose-500/10">
+              {error}
+            </div>
+          )}
+
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
             <div className="flex-1 space-y-2">
               <label className="text-sm font-medium text-white/90">Day</label>
@@ -171,6 +181,7 @@ export default function TutorAvailabilityPage() {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-semibold text-white">{day.day}</span>
+                    <span className="text-xs text-white/60">{day.slots.length} slot(s)</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {day.slots.map((slot) => (
@@ -193,6 +204,21 @@ export default function TutorAvailabilityPage() {
                 </div>
               ))
             )}
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <p className="text-xs uppercase tracking-wide text-white/60">Summary</p>
+              <p className="text-lg font-semibold text-white">{availability.length} day(s) active</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <p className="text-xs uppercase tracking-wide text-white/60">Total slots</p>
+              <p className="text-lg font-semibold text-white">{availability.reduce((sum, d) => sum + d.slots.length, 0)}</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <p className="text-xs uppercase tracking-wide text-white/60">Next step</p>
+              <p className="text-sm text-white/80">Save changes to make slots visible to students.</p>
+            </div>
           </div>
 
           {message && (

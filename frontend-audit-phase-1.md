@@ -87,3 +87,10 @@
 - `/dashboard/profile` now a readable profile/learning preferences layout (editing pending backend support).
 - New shared component: `StatusBadge`; reused chart/table/overview components.
 - Backend need logged (#4 in backend.md) for profile update endpoint.
+
+## Tutor dashboard (Prompt 6C)
+- `/tutor/dashboard` now uses live bookings/profile data to show overview cards (upcoming/completed/pending/rating), bar chart (sessions by month), donut chart (status mix), and recent sessions table with status badges + loading/error/empty handling.
+- `/tutor/sessions` upgraded with filter chips (all/upcoming/completed/cancelled/pending), responsive table (student, subject, date, mode, status), loading/error/empty states, and helper CTA to help center.
+- `/tutor/availability` now has summary tiles, improved error messaging, slot counts, and save flow UX; retains add/remove/save logic with toasts and validation.
+- `/tutor/profile` grouped into headline, bio, rate, mode/location, experience, skills/subjects, languages; validation kept; read-friendly credentials; uses existing save path.
+- Backend dependency remains dashboard aggregates (#5 in backend.md); no new backend items added in this prompt.

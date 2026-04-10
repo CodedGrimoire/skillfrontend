@@ -43,3 +43,30 @@
 - Example request: `{ "name":"Alex", "timezone":"UTC+6", "preferences":"Interview prep" }`
 - Example response: `{ "id":"u1","name":"Alex","email":"alex@example.com","role":"STUDENT","timezone":"UTC+6","preferences":"Interview prep" }`
 - Priority: Medium
+5. Tutor dashboard aggregates
+- Why: Tutor charts/stats need reliable counts (sessions by month, status mix) and rating/review totals.
+- Suggested endpoint: `GET /api/tutor/dashboard` returning {sessionsByMonth:[{label,value}], statusCounts:{upcoming,completed,pending}, rating:number, reviewCount:number, recentSessions:[...] }.
+- Example response:
+```
+{
+  "sessionsByMonth":[{"label":"2026-1","value":4}],
+  "statusCounts":{"upcoming":2,"completed":5,"pending":1},
+  "rating":4.8,
+  "reviewCount":23,
+  "recentSessions":[{"id":"s1","studentName":"Sara","subject":"React","date":"2026-04-10T10:00:00Z","status":"CONFIRMED","mode":"Online"}]
+}
+```
+- Priority: Medium
+6. Tutor availability structured slots
+- Why: Availability page currently saves JSON string list of day/slots; needs server validation, conflict detection, and normalization.
+- Suggested endpoint: `PUT /api/tutor/availability` accept `{ availability: [{ day: "Mon", slots: ["10:00-11:00"] }] }`; `GET /api/tutor/availability` return the same structured shape.
+- Example response:
+```
+{
+  "availability": [
+    {"day":"Mon","slots":["10:00 AM - 11:00 AM","3:00 PM - 4:00 PM"]},
+    {"day":"Wed","slots":["6:00 PM - 7:00 PM"]}
+  ]
+}
+```
+- Priority: Medium

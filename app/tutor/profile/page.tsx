@@ -10,6 +10,11 @@ type TutorProfile = {
   bio?: string;
   pricePerHour?: number;
   skills?: string;
+  mode?: string;
+  location?: string;
+  languages?: string[];
+  experienceYears?: number;
+  headline?: string;
 };
 
 export default function TutorProfilePage() {
@@ -18,6 +23,11 @@ export default function TutorProfilePage() {
     bio: "",
     pricePerHour: undefined,
     skills: "",
+    mode: "Online",
+    location: "",
+    languages: [],
+    experienceYears: undefined,
+    headline: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,6 +44,7 @@ export default function TutorProfilePage() {
           skills: Array.isArray((data as any).skills)
             ? (data as any).skills.join(", ")
             : data.skills ?? "",
+          languages: Array.isArray((data as any).languages) ? (data as any).languages : [],
         });
       } catch (err) {
         // ignore
@@ -83,7 +94,7 @@ export default function TutorProfilePage() {
     <div className="space-y-6">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold text-white glow-text">Tutor Profile</h1>
-        <p className="text-sm text-white/70">Manage your tutor profile information</p>
+        <p className="text-sm text-white/70">Present a clear, trustworthy profile for students.</p>
       </header>
       
       {loading ? (
@@ -100,16 +111,28 @@ export default function TutorProfilePage() {
           onSubmit={handleSubmit}
           className="rounded-2xl border border-white/10 bg-[#0c1027] p-6 space-y-6"
         >
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Name</label>
-            <input
-              value={profile.name}
-              onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
-              required
-              minLength={2}
-            />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Name</label>
+              <input
+                value={profile.name}
+                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                required
+                minLength={2}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Headline</label>
+              <input
+                value={profile.headline || ""}
+                onChange={(e) => setProfile({ ...profile, headline: e.target.value })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                placeholder="e.g., Senior Math Coach | SAT & IB"
+              />
+            </div>
           </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Bio</label>
             <textarea
@@ -117,33 +140,91 @@ export default function TutorProfilePage() {
               onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
               className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
               rows={4}
-              placeholder="Tell students about your teaching experience and expertise..."
+              placeholder="Share your teaching style, outcomes, and who you help best."
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Hourly Rate ($)</label>
-            <input
-              type="number"
-              min={0}
-              step="0.01"
-              value={profile.pricePerHour ?? ""}
-              onChange={(e) =>
-                setProfile({ ...profile, pricePerHour: e.target.value ? Number(e.target.value) : undefined })
-              }
-              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
-              placeholder="e.g., 45.00"
-            />
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Hourly Rate ($)</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={profile.pricePerHour ?? ""}
+                onChange={(e) =>
+                  setProfile({ ...profile, pricePerHour: e.target.value ? Number(e.target.value) : undefined })
+                }
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                placeholder="e.g., 45.00"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Session format</label>
+              <p className="text-sm text-white/70">
+                {profile.mode || "Online"} {profile.location ? `• ${profile.location}` : ""}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Credentials / Highlights</label>
+              <p className="text-sm text-white/70">
+                {profile.experienceYears ? `${profile.experienceYears}+ yrs experience` : "Experience not set"}
+              </p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">
-              Skills (comma separated)
-            </label>
-            <input
-              value={profile.skills}
-              onChange={(e) => setProfile({ ...profile, skills: e.target.value })}
-              className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
-              placeholder="React, TypeScript, Node.js"
-            />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Skills / Subjects (comma separated)</label>
+              <input
+                value={profile.skills}
+                onChange={(e) => setProfile({ ...profile, skills: e.target.value })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                placeholder="Calculus, SAT Math, Statistics"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Languages (comma separated)</label>
+              <input
+                value={(profile.languages || []).join(", ")}
+                onChange={(e) => setProfile({ ...profile, languages: e.target.value.split(",").map((l) => l.trim()).filter(Boolean) })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                placeholder="English, Spanish, Bengali"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Mode</label>
+              <select
+                value={profile.mode || "Online"}
+                onChange={(e) => setProfile({ ...profile, mode: e.target.value })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+              >
+                <option value="Online">Online</option>
+                <option value="In person">In person</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Location / Timezone</label>
+              <input
+                value={profile.location || ""}
+                onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                placeholder="UTC+6, Dhaka"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90">Years of experience</label>
+              <input
+                type="number"
+                min={0}
+                value={profile.experienceYears ?? ""}
+                onChange={(e) => setProfile({ ...profile, experienceYears: e.target.value ? Number(e.target.value) : undefined })}
+                className="w-full rounded-lg border border-white/15 bg-[#0c1027] px-3 py-2 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/60"
+                placeholder="5"
+              />
+            </div>
           </div>
           {message && (
             <div className={`glass-card px-4 py-3 ${

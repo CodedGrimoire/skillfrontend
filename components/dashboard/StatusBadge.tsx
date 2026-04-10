@@ -4,6 +4,7 @@ const colorMap: Record<string, string> = {
   COMPLETED: "bg-emerald-500/20 text-emerald-200 border-emerald-500/30",
   CANCELLED: "bg-rose-500/20 text-rose-200 border-rose-500/30",
   PENDING: "bg-amber-500/20 text-amber-200 border-amber-500/30",
+  DRAFT: "bg-white/10 text-white/70 border-white/20",
 };
 
 export function StatusBadge({ status }: { status: string }) {
