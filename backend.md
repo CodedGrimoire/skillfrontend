@@ -31,3 +31,9 @@
 }
 ```
 - Priority: Medium (unlocks richer, accurate detail rendering and review section).
+3. Social auth support
+- Why: UI now surfaces Google/Facebook buttons; backend needs OAuth flow to enable them.
+- Suggested endpoints: `POST /api/auth/social` exchanging provider token for app JWT; or dedicated routes `/api/auth/google` and `/api/auth/facebook` returning {token, role}.
+- Example request: `{ provider: "google", idToken: "..." }`
+- Example response: `{ token: "jwt", role: "STUDENT" }`
+- Priority: Low/Medium (UI currently disabled until backend available).

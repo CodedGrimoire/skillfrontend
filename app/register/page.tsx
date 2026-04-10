@@ -1,14 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { post } from "@/src/lib/api";
 import { redirectForRole } from "@/src/lib/auth";
 import { useAuth } from "@/src/context/AuthContext";
 import { useToast } from "@/src/context/ToastContext";
 import { Spinner } from "@/components/ui/Spinner";
-import { EyeIcon, EyeOffIcon } from "@/components/ui/Icons";
 import { AuthGate } from "@/src/components/AuthGate";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { PasswordField } from "@/components/auth/PasswordField";
+import { DemoCredentialButtons } from "@/components/auth/DemoCredentialButtons";
+import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 
 const roles = [
   { value: "STUDENT", label: "Student" },
@@ -22,7 +26,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("STUDENT");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,8 +42,12 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       setError("All fields are required.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords must match.");
       return;
     }
 
@@ -69,114 +77,114 @@ export default function RegisterPage() {
 
   return (
     <AuthGate mode="publicOnly">
-      <div className="mx-auto max-w-md glass-card">
-        <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-semibold text-white">Create account</h1>
-          <p className="text-sm text-white/70">
-            Join as a student or tutor to start learning or teaching.
-          </p>
-        </div>
+      <div className="mx-auto max-w-5xl grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start py-6">
+        <AuthCard title="Create account" subtitle="Join as a student or tutor to start learning or teaching.">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90" htmlFor="name">
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="glass-input w-full"
+                placeholder="Alex Johnson"
+                required
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white/90" htmlFor="name">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="glass-input w-full"
-            placeholder="Alex Johnson"
-            required
-          />
-        </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="glass-input w-full"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white/90" htmlFor="email">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="glass-input w-full"
-            placeholder="you@example.com"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white/90" htmlFor="password">
-            Password
-          </label>
-          <div className="relative">
-            <input
+            <PasswordField
               id="password"
-              type={showPassword ? "text" : "password"}
+              label="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="glass-input w-full pr-10"
+              onChange={setPassword}
               placeholder="••••••••"
-              required
             />
+
+            <PasswordField
+              id="confirmPassword"
+              label="Confirm password"
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              placeholder="••••••••"
+            />
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/90" htmlFor="role">
+                Role
+              </label>
+              <select
+                id="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="glass-input w-full"
+              >
+                {roles.map((r) => (
+                  <option key={r.value} value={r.value} className="bg-[#0a0e27]">
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="text-xs text-white/70 flex items-center justify-between">
+              <span>Already have an account? <Link href="/login" className="underline underline-offset-4 hover:text-white">Login</Link></span>
+              <Link href="/terms" className="underline underline-offset-4 hover:text-white">Terms</Link>
+            </div>
+
+            {error && (
+              <div className="glass-card px-4 py-3 text-sm text-rose-300 border-rose-500/30 bg-rose-500/10">
+                {error}
+              </div>
+            )}
+
             <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              type="submit"
+              disabled={loading}
+              className="glass-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {showPassword ? (
-                <EyeOffIcon className="h-5 w-5" />
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner size={14} />
+                  Creating account...
+                </span>
               ) : (
-                <EyeIcon className="h-5 w-5" />
+                "Register"
               )}
             </button>
-          </div>
+
+            <DemoCredentialButtons onFill={({ email, password, role }) => { setEmail(email); setPassword(password); setConfirmPassword(password); if (role) setRole(role); }} />
+            <SocialAuthButtons disabled />
+          </form>
+        </AuthCard>
+
+        <div className="glass-card space-y-4">
+          <h3 className="text-lg font-semibold text-white">Why join SkillBridge?</h3>
+          <ul className="space-y-2 text-sm text-white/75 list-disc list-inside">
+            <li>Students: find vetted tutors, book instantly, and track progress.</li>
+            <li>Tutors: showcase your expertise, set availability, and get matched.</li>
+            <li>Admins: manage users, categories, and bookings effectively.</li>
+          </ul>
+          <div className="text-xs text-white/60">Need help? Visit <Link href="/help" className="underline">Help Center</Link>.</div>
         </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white/90" htmlFor="role">
-            Role
-          </label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="glass-input w-full"
-          >
-            {roles.map((r) => (
-              <option key={r.value} value={r.value} className="bg-[#0a0e27]">
-                {r.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {error && (
-          <div className="glass-card px-4 py-3 text-sm text-rose-300 border-rose-500/30 bg-rose-500/10">
-            {error}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="glass-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading ? (
-            <span className="inline-flex items-center gap-2">
-              <Spinner size={14} />
-              Creating account...
-            </span>
-          ) : (
-            "Register"
-          )}
-        </button>
-      </form>
-    </div>
+      </div>
     </AuthGate>
   );
 }

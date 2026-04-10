@@ -66,3 +66,10 @@
 - States: loading skeleton grid, not-found/empty states for tutor and reviews, related tutors loading/empty.
 - Related tutors fetched by category with graceful fallback.
 - Logged backend needs for richer tutor detail (reviews, badges, media, related endpoint) in `backend.md`.
+
+## Auth pages (Prompt 5)
+- Login/Register redesigned with `AuthCard`, shared `PasswordField`, demo autofill buttons (student/tutor/admin), and social login UI (disabled until backend ready).
+- Added confirm password, inline validation for required fields/matching passwords, clearer errors, and loading/disabled states.
+- Added supporting links (forgot password → /help, login/register cross-links, terms, help center) with valid routes.
+- Layout now two-column with benefit highlights; actions preserve existing auth flow and redirects.
+- Backend needs: social auth support logged (#3 in backend.md).
