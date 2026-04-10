@@ -10,11 +10,13 @@ import { ProfileDropdown } from "@/components/dashboard/ProfileDropdown";
 
 export type NavItem = { label: string; href: string };
 
+type Role = "STUDENT" | "TUTOR" | "ADMIN";
+
 interface Props {
   title: string;
   subtitle?: string;
   navItems: NavItem[];
-  allowedRoles: string[];
+  allowedRoles: Role[];
   children: ReactNode;
 }
 

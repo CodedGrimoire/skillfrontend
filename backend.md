@@ -37,3 +37,9 @@
 - Example request: `{ provider: "google", idToken: "..." }`
 - Example response: `{ token: "jwt", role: "STUDENT" }`
 - Priority: Low/Medium (UI currently disabled until backend available).
+4. Student profile update endpoint
+- Why: Dashboard profile page cannot persist edits yet.
+- Suggested endpoint: `PUT /api/profile` accepting {name, timezone, preferences} and returning updated user.
+- Example request: `{ "name":"Alex", "timezone":"UTC+6", "preferences":"Interview prep" }`
+- Example response: `{ "id":"u1","name":"Alex","email":"alex@example.com","role":"STUDENT","timezone":"UTC+6","preferences":"Interview prep" }`
+- Priority: Medium

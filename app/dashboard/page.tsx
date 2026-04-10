@@ -1,217 +1,143 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { get } from "@/src/lib/api";
+import { OverviewCard } from "@/components/dashboard/OverviewCard";
+import { ChartCard } from "@/components/dashboard/ChartCard";
+import { DataTableCard } from "@/components/dashboard/DataTableCard";
+import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { LoadingGrid } from "@/components/layout/LoadingGrid";
+import { EmptyState } from "@/components/layout/EmptyState";
+import Link from "next/link";
 
-
-
-
-import { useAuth } from "@/src/context/AuthContext";
-import { redirectForRole } from "@/src/lib/auth";
-
-
-
-import { Spinner } from "@/components/ui/Spinner";
-import { ClockIcon, CheckCircleIcon, XCircleIcon } from "@/components/ui/Icons";
+const pageSize = 8;
 
 type Booking = {
   id: string;
   status: string;
   date: string;
-  [key: string]: unknown;
+  tutorName?: string;
+  subject?: string;
+  mode?: string;
 };
 
-type BookingStat = {
-  upcoming: number;
-  completed: number;
-  cancelled: number;
-};
-
-export default function StudentOverviewPage() {
-  const { user, authLoading } = useAuth();
-  const router = useRouter();
-  const hasRedirected = useRef(false);
-  const [stats, setStats] = useState<BookingStat>({
-    upcoming: 0,
-    completed: 0,
-    cancelled: 0,
-  });
+export default function StudentDashboardPage() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-
-  
-  useEffect(() => {
-   
-    if (authLoading) {
-      return;
-    }
-
-   
-    if (hasRedirected.current) {
-      return;
-    }
-
-   
-    if (!user) {
-      return;
-    }
-
-   
-    if (user.role !== "STUDENT") {
-      hasRedirected.current = true;
-      router.replace(redirectForRole(user.role));
-      return;
-    }
-
-   
-  }, [authLoading, user, router]);
-
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-   
-    if (authLoading || !user || user.role !== "STUDENT" || hasRedirected.current) {
-      return;
-    }
-
-    const fetchStats = async () => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const res = await get<{ success?: boolean; bookings?: Booking[] } | Booking[]>("/api/bookings/my");
-      
-        const bookingsArray = Array.isArray(res.data) 
-          ? res.data 
-          : (res.data as any)?.bookings || (res.data as any)?.data || [];
-        const bookings = Array.isArray(bookingsArray) ? bookingsArray : [];
-        
-       
-        const calculatedStats: BookingStat = {
-          upcoming: bookings.filter((b) => b.status === "CONFIRMED" || b.status === "UPCOMING").length,
-          completed: bookings.filter((b) => b.status === "COMPLETED").length,
-          cancelled: bookings.filter((b) => b.status === "CANCELLED").length,
-        };
-        
-        setStats(calculatedStats);
-      }
-      
-      
-      
-      
-      
-      catch (err) 
-      
-      
-      
-      {
-       
-        setStats({ upcoming: 0, completed: 0, cancelled: 0 });
-      } 
-      
-      
-      
-      finally
-      
-      
-      
-      {
+        const res = await get<{ bookings?: Booking[] } | Booking[]>("/api/bookings/my");
+        const arr = Array.isArray(res.data) ? res.data : (res.data as any)?.bookings || (res.data as any)?.data || [];
+        const mapped: Booking[] = (arr as any[]).map((b) => ({
+          id: b.id,
+          status: b.status || "PENDING",
+          date: b.date || b.startTime || b.createdAt,
+          tutorName: b.tutorName || b.tutor?.name,
+          subject: b.subject || b.tutor?.subject,
+          mode: b.mode || b.sessionMode || "Online",
+        }));
+        setBookings(mapped);
+      } catch (err) {
+        setError("Could not load dashboard data.");
+        setBookings([]);
+      } finally {
         setLoading(false);
       }
     };
-    
-    fetchStats();
-  }, [authLoading, user]);
+    fetchData();
+  }, []);
 
-  
-  if (authLoading || (user && user.role !== "STUDENT" && !hasRedirected.current)) 
-    
-    
-    
-    {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
+  const stats = useMemo(() => {
+    const upcoming = bookings.filter((b) => ["CONFIRMED", "UPCOMING"].includes(b.status)).length;
+    const completed = bookings.filter((b) => b.status === "COMPLETED").length;
+    const pending = bookings.filter((b) => b.status === "PENDING").length;
+    return { upcoming, completed, pending };
+  }, [bookings]);
 
-          <Spinner size={32} />
-          <p className="text-sm text-slate-600">
-            {authLoading ? "Checking authentication..." : "Redirecting..."}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const statusData = useMemo(
+    () => [
+      { label: "Upcoming", value: stats.upcoming },
+      { label: "Completed", value: stats.completed },
+      { label: "Pending", value: stats.pending },
+    ],
+    [stats],
+  );
 
- 
-  if (hasRedirected.current || (user && user.role !== "STUDENT")) {
-    return null;
-  }
+  const monthlyData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    bookings.forEach((b) => {
+      const d = b.date ? new Date(b.date) : null;
+      if (!d || isNaN(d.getTime())) return;
+      const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+      .map(([label, value]) => ({ label, value }));
+  }, [bookings]);
 
-  const statCards = [
-    {
-      key: "upcoming" as const,
-      label: "Upcoming",
-      icon: ClockIcon,
-      color: "from-blue-500/20 to-cyan-500/20",
-      iconColor: "text-blue-400",
-      valueColor: "text-blue-600",
-    },
-    {
-      key: "completed" as const,
-      label: "Completed",
-      icon: CheckCircleIcon,
-      color: "from-emerald-500/20 to-teal-500/20",
-      iconColor: "text-emerald-400",
-      valueColor: "text-emerald-600",
-    },
-    {
-      key: "cancelled" as const,
-      label: "Cancelled",
-      icon: XCircleIcon,
-      color: "from-rose-500/20 to-pink-500/20",
-      iconColor: "text-rose-400",
-      valueColor: "text-rose-600",
-    },
-  ];
+  const recentBookings = bookings
+    .slice()
+    .sort((a, b) => (new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0))
+    .slice(0, pageSize);
 
   return (
-    <div className="space-y-8">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-white glow-text">
-          Welcome back{user?.name ? `, ${user.name}` : ""} 👋
-        </h1>
-        <p className="text-sm text-white/70">
-          Track your learning and upcoming sessions here.
-        </p>
-      </header>
+    <div className="space-y-6">
+      {loading ? (
+        <LoadingGrid items={6} columns={3} />
+      ) : error ? (
+        <div className="glass-card px-4 py-3 text-sm text-rose-300 border-rose-500/30 bg-rose-500/10">{error}</div>
+      ) : (
+        <>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <OverviewCard title="Upcoming" value={`${stats.upcoming}`} sublabel="Confirmed or upcoming sessions" />
+            <OverviewCard title="Completed" value={`${stats.completed}`} sublabel="Sessions finished" accent="from-emerald-500/20 to-teal-500/20" />
+            <OverviewCard title="Pending" value={`${stats.pending}`} sublabel="Awaiting confirmation" accent="from-amber-500/20 to-orange-500/20" />
+          </div>
 
-      <div className="grid gap-6 sm:grid-cols-3">
-        {statCards.map((card) => {
-          const value = stats[card.key] ?? 0;
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.key}
-              className="glass-card group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20"
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-50 group-hover:opacity-70 transition-opacity`} />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${card.color} border border-white/10`}>
-                    <Icon className={`h-6 w-6 ${card.iconColor}`} />
-                  </div>
-                </div>
-                <p className="text-sm font-medium text-white/70 uppercase tracking-wide mb-2">
-                  {card.label}
-                </p>
-                <p className={`text-4xl font-bold ${card.valueColor} transition-all`}>
-                  {loading ? (
-                    <span className="inline-block animate-pulse">—</span>
-                  ) : (
-                    value
-                  )}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ChartCard
+              title="Bookings by month"
+              subtitle="Recent activity"
+              type="bar"
+              data={monthlyData}
+            />
+            <ChartCard
+              title="Status mix"
+              subtitle="Session pipeline"
+              type="donut"
+              data={statusData}
+            />
+          </div>
+
+          <DataTableCard
+            title="Recent bookings"
+            emptyText="No bookings yet. Browse tutors to book your first session."
+            columns={[
+              { key: "tutorName", header: "Tutor", render: (row) => row.tutorName || "—" },
+              { key: "subject", header: "Subject", render: (row) => row.subject || "—" },
+              { key: "date", header: "Date", render: (row) => (row.date ? new Date(row.date).toLocaleString() : "—") },
+              { key: "mode", header: "Mode" },
+              { key: "status", header: "Status", render: (row) => <StatusBadge status={row.status} /> },
+            ]}
+            data={recentBookings}
+          />
+
+          {bookings.length === 0 && (
+            <EmptyState
+              title="No bookings yet"
+              description="Book a tutor to see your sessions here."
+              actionLabel="Browse tutors"
+              actionHref="/tutors"
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function StudentDashboardLayout({ children }: { children: ReactNo
       title="Student"
       subtitle="Manage your sessions, bookings, and learning profile."
       navItems={navItems}
-      allowedRoles={["STUDENT", "USER"]}
+      allowedRoles={["STUDENT"]}
     >
       {children}
     </DashboardLayout>

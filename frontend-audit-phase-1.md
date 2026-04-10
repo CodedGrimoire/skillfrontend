@@ -80,3 +80,10 @@
 - Placeholder pages created for missing routes: student bookings/profile; tutor sessions; admin users, bookings, categories, analytics.
 - Sidebars responsive with mobile toggle; header includes profile dropdown and consistent spacing.
 - No new backend needs for this phase.
+
+## Student dashboard (Prompt 6B)
+- `/dashboard` now shows stat cards (upcoming/completed/pending), bar chart (bookings by month), donut chart (status mix), and recent bookings table with status badges.
+- `/dashboard/bookings` upgraded with filters (all/upcoming/completed/cancelled/pending), responsive cards, loading/error/empty states.
+- `/dashboard/profile` now a readable profile/learning preferences layout (editing pending backend support).
+- New shared component: `StatusBadge`; reused chart/table/overview components.
+- Backend need logged (#4 in backend.md) for profile update endpoint.
