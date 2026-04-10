@@ -94,3 +94,11 @@
 - `/tutor/availability` now has summary tiles, improved error messaging, slot counts, and save flow UX; retains add/remove/save logic with toasts and validation.
 - `/tutor/profile` grouped into headline, bio, rate, mode/location, experience, skills/subjects, languages; validation kept; read-friendly credentials; uses existing save path.
 - Backend dependency remains dashboard aggregates (#5 in backend.md); no new backend items added in this prompt.
+
+## Admin dashboard (Prompt 6D)
+- `/admin` upgraded to analytics home with stat cards (users, students, tutors, bookings, categories), bar chart (bookings by month), donut chart (role mix), and recent activity table with status badges plus loading/error/empty states.
+- `/admin/users` now table with role filter, status badges, and disabled moderation action until backend exists.
+- `/admin/bookings` now status-filtered table (student, tutor, subject, date, mode, status) with loading/error/empty states and moderation notice.
+- `/admin/categories` now lists categories with usage counts, read-only controls, and disabled add/edit/delete until backend CRUD exists.
+- `/admin/analytics` adds extra charts (bookings by category, role ratio, revenue proxy) and insight cards; handles loading/empty/error states.
+- Backend needs logged for admin stats/moderation and categories CRUD (#7, #8 in backend.md).

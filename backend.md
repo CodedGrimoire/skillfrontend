@@ -70,3 +70,14 @@
 }
 ```
 - Priority: Medium
+7. Admin moderation + aggregates
+- Why: Admin pages need reliable stats and the ability to ban/unban users and moderate bookings without dummy buttons.
+- Suggested endpoints:
+  - `GET /api/admin/stats` => {totalUsers, totalTutors, totalStudents, totalBookings, totalCategories, bookingsByMonth:[{label,value}], roleCounts:{STUDENT:10,TUTOR:5,ADMIN:1}}
+  - `POST /api/admin/users/:id/status` body {status:"BANNED"|"ACTIVE"} to ban/unban.
+  - `POST /api/admin/bookings/:id/status` body {status:"CANCELLED"|...} for admin overrides.
+- Priority: High
+8. Categories CRUD for admin
+- Why: Admin categories page currently read-only; needs create/update/delete with usage counts.
+- Suggested endpoints: `POST /api/admin/categories` {name}, `PUT /api/admin/categories/:id` {name}, `DELETE /api/admin/categories/:id`, responses returning updated list or category.
+- Priority: Medium
