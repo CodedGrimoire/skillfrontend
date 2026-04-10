@@ -73,3 +73,10 @@
 - Added supporting links (forgot password → /help, login/register cross-links, terms, help center) with valid routes.
 - Layout now two-column with benefit highlights; actions preserve existing auth flow and redirects.
 - Backend needs: social auth support logged (#3 in backend.md).
+
+## Dashboard shell & navigation (Prompt 6A)
+- Added reusable dashboard shell (`DashboardLayout`, `DashboardSidebar`, `DashboardHeader`, `ProfileDropdown`).
+- Student sidebar: Dashboard, My Bookings, Profile. Tutor sidebar: Dashboard, Availability, Sessions, Profile. Admin sidebar: Dashboard, Users, Bookings, Categories, Analytics.
+- Placeholder pages created for missing routes: student bookings/profile; tutor sessions; admin users, bookings, categories, analytics.
+- Sidebars responsive with mobile toggle; header includes profile dropdown and consistent spacing.
+- No new backend needs for this phase.

@@ -1,51 +1,22 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { AuthGate } from "@/src/components/AuthGate";
+import { ReactNode } from "react";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 
 const navItems = [
-  { id: "overview", label: "Overview", href: "/tutor/dashboard" },
-  { id: "sessions", label: "Sessions", href: "/tutor/dashboard" }, // same overview includes sessions list
-  { id: "profile", label: "Profile", href: "/tutor/profile" },
-  { id: "availability", label: "Availability", href: "/tutor/availability" },
+  { label: "Dashboard", href: "/tutor/dashboard" },
+  { label: "Availability", href: "/tutor/availability" },
+  { label: "Sessions", href: "/tutor/sessions" },
+  { label: "Profile", href: "/tutor/profile" },
 ];
 
-export default function TutorLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
+export default function TutorLayout({ children }: { children: ReactNode }) {
   return (
-    <AuthGate mode="protected" allowedRoles={["TUTOR"]}>
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 min-h-screen">
-        <aside className="glass-card w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-6 h-fit">
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-white mb-1">Tutor Dashboard</h2>
-            <div className="h-0.5 w-12 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 rounded-full" />
-          </div>
-          <nav className="space-y-2">
-            {navItems.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  className={`flex items-center rounded-xl px-4 py-3 transition-all duration-200 ${
-                    active
-                      ? "bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-cyan-500/30 text-white font-semibold border border-white/20 shadow-lg shadow-purple-500/20"
-                      : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
-                  }`}
-                >
-                  <span className="text-sm">{item.label}</span>
-                  {active && (
-                    <div className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 shadow-[0_0_8px_rgba(168,85,247,0.6)]" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-        <section className="flex-1 min-w-0">{children}</section>
-      </div>
-    </AuthGate>
+    <DashboardLayout
+      title="Tutor"
+      subtitle="Track your sessions, availability, and profile."
+      navItems={navItems}
+      allowedRoles={["TUTOR"]}
+    >
+      {children}
+    </DashboardLayout>
   );
 }
